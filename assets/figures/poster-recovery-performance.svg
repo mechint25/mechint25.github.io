@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="1074" height="430" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1074 430" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="1074" height="430"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-430)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="0" width="1074" height="430" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<path d="M 260,48 L 994,48 Z" style="stroke: rgb(7%,14%,21%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 260,402 L 260,48 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="254.99462890625" y="19" style="font-family: PosterSans; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,38) scale(1,-1)">0</text>
+			<path d="M 406.8,402 L 406.8,48 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="396.7892578125" y="19" style="font-family: PosterSans; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,38) scale(1,-1)">20</text>
+			<path d="M 553.6,402 L 553.6,48 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="543.5892578125" y="19" style="font-family: PosterSans; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,38) scale(1,-1)">40</text>
+			<path d="M 700.4,402 L 700.4,48 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="690.3892578125" y="19" style="font-family: PosterSans; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,38) scale(1,-1)">60</text>
+			<path d="M 847.2,402 L 847.2,48 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="837.1892578125" y="19" style="font-family: PosterSans; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,38) scale(1,-1)">80</text>
+			<path d="M 994,402 L 994,48 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="978.98388671875" y="19" style="font-family: PosterSans; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,38) scale(1,-1)">100</text>
+			<text x="184.48291015625" y="365" style="font-family: PosterSans; font-size: 21px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,730) scale(1,-1)">Core</text>
+			<rect x="260" y="361" width="697.5203717560001" height="20" rx="4" ry="4" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,24%,40%); fill-rule: evenodd;"/>
+			<path d="M 957.047519,352 L 957.981548,352 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 4;"/>
+			<circle cx="957.1934599" cy="352" r="6" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="957.98154836" cy="352" r="6" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="957.6312909000001" cy="352" r="6" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="957.74804094" cy="352" r="6" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="957.04751868" cy="352" r="6" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="997.7763671875" y="366" style="font-family: PosterSans-Bold; font-size: 21px;fill: rgb(7%,24%,40%); stroke:none;" transform="translate(0,732) scale(1,-1)">95.03%</text>
+			<text x="107.42480468749999" y="306" style="font-family: PosterSans; font-size: 21px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,612) scale(1,-1)">Encoder only</text>
+			<rect x="260" y="302" width="676.81414074" height="20" rx="4" ry="4" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(82%,47%,12%); fill-rule: evenodd;"/>
+			<path d="M 934.105461,293 L 938.396153,293 Z" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 4;"/>
+			<circle cx="937.6080645000001" cy="293" r="6" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="937.66643952" cy="293" r="6" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="938.39615296" cy="293" r="6" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="934.10546054" cy="293" r="6" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="936.29458618" cy="293" r="6" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="997.7763671875" y="307" style="font-family: PosterSans-Bold; font-size: 21px;fill: rgb(82%,47%,12%); stroke:none;" transform="translate(0,614) scale(1,-1)">92.21%</text>
+			<text x="78.81640625" y="247" style="font-family: PosterSans; font-size: 21px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,494) scale(1,-1)">Gates + readout</text>
+			<rect x="260" y="243" width="630.171121308" height="20" rx="4" ry="4" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
+			<path d="M 888.717543,234 L 891.198551,234 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 4;"/>
+			<circle cx="890.35208754" cy="234" r="6" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="891.19855102" cy="234" r="6" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="890.35208754" cy="234" r="6" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="888.7175429399999" cy="234" r="6" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="890.2353374999999" cy="234" r="6" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="997.7763671875" y="248" style="font-family: PosterSans-Bold; font-size: 21px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,496) scale(1,-1)">85.85%</text>
+			<text x="96.99658203125" y="188" style="font-family: PosterSans-Bold; font-size: 21px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,376) scale(1,-1)">Readout only</text>
+			<rect x="260" y="184" width="576.773914616" height="20" rx="4" ry="4" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
+			<path d="M 825.699848,175 L 847.211678,175 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 4;"/>
+			<circle cx="847.21167794" cy="175" r="6" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="829.64027578" cy="175" r="6" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="846.2776482600001" cy="175" r="6" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="835.04012294" cy="175" r="6" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="825.69984816" cy="175" r="6" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="997.7763671875" y="189" style="font-family: PosterSans-Bold; font-size: 21px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,378) scale(1,-1)">78.58%</text>
+			<text x="60.728515625" y="129" style="font-family: PosterSans; font-size: 21px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,258) scale(1,-1)">Gates only, dense</text>
+			<rect x="260" y="125" width="508.41474475999996" height="20" rx="4" ry="4" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,54%,50%); fill-rule: evenodd;"/>
+			<path d="M 731.100328,116 L 800.305958,116 Z" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 4;"/>
+			<circle cx="771.90567812" cy="116" r="6" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="731.10032804" cy="116" r="6" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="800.3059584399999" cy="116" r="6" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="766.24313236" cy="116" r="6" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="772.5186268399999" cy="116" r="6" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="997.7763671875" y="130" style="font-family: PosterSans-Bold; font-size: 21px;fill: rgb(7%,54%,50%); stroke:none;" transform="translate(0,260) scale(1,-1)">69.27%</text>
+			<text x="135.46923828125" y="70" style="font-family: PosterSans-Bold; font-size: 21px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,140) scale(1,-1)">Damaged</text>
+			<rect x="260" y="66" width="113.08742844400001" height="20" rx="4" ry="4" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(77%,29%,22%); fill-rule: evenodd;"/>
+			<path d="M 328.417542,57 L 385.655941,57 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 4;"/>
+			<circle cx="383.5251903" cy="57" r="6" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="384.95541865999996" cy="57" r="6" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="328.41754194" cy="57" r="6" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="385.65594092" cy="57" r="6" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="382.8830504" cy="57" r="6" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 3; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="997.7763671875" y="71" style="font-family: PosterSans-Bold; font-size: 21px;fill: rgb(77%,29%,22%); stroke:none;" transform="translate(0,142) scale(1,-1)">15.41%</text>
+			<text x="504.1826171875" y="-13" style="font-family: PosterSans; font-size: 20px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,-26) scale(1,-1)">Held-out POS accuracy (%)</text>
+		</g>
+	</g>
+</svg>

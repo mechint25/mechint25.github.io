@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="1074" height="430" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1074 430" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="1074" height="430"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-430)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="0" width="1074" height="430" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<path d="M 92,400 L 92,72 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="80.183837890625" y="43" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,86) scale(1,-1)">0.4</text>
+			<path d="M 243.935484,400 L 243.935484,72 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="232.11932176159272" y="43" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,86) scale(1,-1)">0.5</text>
+			<path d="M 395.870968,400 L 395.870968,72 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="384.05480563256043" y="43" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,86) scale(1,-1)">0.6</text>
+			<path d="M 547.806452,400 L 547.806452,72 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="535.9902895035282" y="43" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,86) scale(1,-1)">0.7</text>
+			<path d="M 699.741935,400 L 699.741935,72 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="687.9257733744961" y="43" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,86) scale(1,-1)">0.8</text>
+			<path d="M 851.677419,400 L 851.677419,72 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="839.8612572454638" y="43" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,86) scale(1,-1)">0.9</text>
+			<path d="M 1003.612903,400 L 1003.612903,72 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="991.7967411164313" y="43" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,86) scale(1,-1)">1.0</text>
+			<path d="M 92,108.444444 L 1034,108.444444 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="57.0908203125" y="101.44444444444446" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,202) scale(1,-1)">20</text>
+			<path d="M 92,181.333333 L 1034,181.333333 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="57.0908203125" y="174.33333333333331" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,348) scale(1,-1)">40</text>
+			<path d="M 92,254.222222 L 1034,254.222222 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="57.0908203125" y="247.22222222222223" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,494) scale(1,-1)">60</text>
+			<path d="M 92,327.111111 L 1034,327.111111 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="57.0908203125" y="320.1111111111111" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,640) scale(1,-1)">80</text>
+			<path d="M 92,400 L 1034,400 Z" style="stroke: rgb(90%,92%,94%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="47.63623046875" y="393.0" style="font-family: PosterSans; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,786) scale(1,-1)">100</text>
+			<path d="M 143.003223,96.855111 L 143.003223,327.111111 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 4; stroke-dasharray: 8, 7;"/>
+			<text x="161.00322258064512" y="199.77777777777777" style="font-family: PosterSans-Bold; font-size: 18px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,399) scale(1,-1)">same encoder states</text>
+			<circle cx="143.00322258064512" cy="96.8880751111111" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(77%,29%,22%); fill-rule: evenodd;"/>
+			<text x="157.00322258064512" y="66.8880751111111" style="font-family: PosterSans-Bold; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,133) scale(1,-1)">Damaged</text>
+			<circle cx="143.00322258064512" cy="327.11690942222225" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
+			<text x="157.00322258064512" y="337.11690942222225" style="font-family: PosterSans-Bold; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,674) scale(1,-1)">Readout only</text>
+			<circle cx="265.53919032258057" cy="348.5369129777778" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
+			<text x="279.53919032258057" y="358.5369129777778" style="font-family: PosterSans-Bold; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,717) scale(1,-1)">Gates + readout</text>
+			<circle cx="402.9359677419355" cy="289.7261011555555" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(7%,54%,50%); fill-rule: evenodd;"/>
+			<text x="416.9359677419355" y="259.7261011555555" style="font-family: PosterSans-Bold; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,519) scale(1,-1)">Gates only, dense</text>
+			<circle cx="681.3364709677419" cy="372.0003711111111" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(82%,47%,12%); fill-rule: evenodd;"/>
+			<text x="557.3159631552419" y="384.0003711111111" style="font-family: PosterSans-Bold; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,768) scale(1,-1)">Encoder only</text>
+			<circle cx="1003.6129032258063" cy="381.72487866666665" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(7%,24%,40%); fill-rule: evenodd;"/>
+			<text x="952.6031376008063" y="393.72487866666665" style="font-family: PosterSans-Bold; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,787) scale(1,-1)">Core</text>
+			<text x="431.8232421875" y="2" style="font-family: PosterSans; font-size: 20px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,4) scale(1,-1)">Linear CKA to pre-lesion core</text>
+			<text x="15" y="406" style="font-family: PosterSans-Bold; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,812) scale(1,-1)">POS accuracy (%)</text>
+		</g>
+	</g>
+</svg>

@@ -1,0 +1,162 @@
+{
+  "meta": {
+    "generated": "2026-10-23",
+    "task": "UD English-EWT universal POS tagging",
+    "eval_tokens": 25147,
+    "backbone": "bert-base-uncased",
+    "primary_seed": 42,
+    "experiment_commit": "3074adce0c39d07cc294d4deb6b706210ae0ca9b"
+  },
+  "stages": [
+    {
+      "letter": "A",
+      "title": "Learn a sparse task-sufficient configuration",
+      "score": 94.98,
+      "note": "Train projection-specific gates and a linear POS readout while pretrained BERT weights remain fixed."
+    },
+    {
+      "letter": "B",
+      "title": "Apply the permanent structural lesion",
+      "score": 16.82,
+      "note": "Clamp selected Q/K/V head-sized groups and dense projection masks to -12.0 and block their gradients."
+    },
+    {
+      "letter": "C",
+      "title": "Choose what the damaged system may adapt",
+      "score": 16.82,
+      "note": "Every pathway begins from the same damaged configuration; permanently lesioned gates stay disabled."
+    },
+    {
+      "letter": "D",
+      "title": "Compare behavior and representation",
+      "score": null,
+      "note": "Accuracy and similarity can recover by different amounts under different permitted adaptations."
+    }
+  ],
+  "conditions": {
+    "core": {
+      "label": "Core",
+      "short": "Core",
+      "accuracy": 94.985485,
+      "cka_core": 1.0,
+      "cka_damage": 0.433569,
+      "pos_centroid": 1.0,
+      "head_rdm": 1.0,
+      "active_gates": 50.581115,
+      "trainable": ["gates", "readout"],
+      "summary": "Sparse task-sufficient configuration learned with fixed pretrained encoder weights.",
+      "implication": "The learned gated configuration sustains near-95% POS accuracy."
+    },
+    "damage": {
+      "label": "Damaged",
+      "short": "Damaged",
+      "accuracy": 16.829045,
+      "cka_core": 0.433569,
+      "cka_damage": 1.0,
+      "pos_centroid": 0.325838,
+      "head_rdm": 1.0,
+      "active_gates": 24.239247,
+      "trainable": [],
+      "summary": "Fixed residual network immediately after the structural lesion.",
+      "implication": "The original readout fails on the changed representation; NOUN dominates the residual accuracy."
+    },
+    "mask_only_no_reg": {
+      "label": "Gates only · no penalty",
+      "short": "Gates · no penalty",
+      "accuracy": 56.527618,
+      "cka_core": 0.529046,
+      "cka_damage": 0.845590,
+      "pos_centroid": 0.559458,
+      "head_rdm": 1.0,
+      "active_gates": 24.978299,
+      "trainable": ["gates"],
+      "summary": "Surviving gates adapt without an explicit sparsity penalty; weights and readout stay fixed.",
+      "implication": "Rerouting alone recovers part of the lost behavior and shifts geometry toward the core."
+    },
+    "mask_only_reg": {
+      "label": "Gates only · sparse",
+      "short": "Gates · sparse",
+      "accuracy": 53.358253,
+      "cka_core": 0.509324,
+      "cka_damage": 0.873131,
+      "pos_centroid": 0.521516,
+      "head_rdm": 1.0,
+      "active_gates": 21.104601,
+      "trainable": ["gates"],
+      "summary": "Surviving gates adapt under a sparsity-promoting objective; weights and readout stay fixed.",
+      "implication": "A stronger sparsity constraint produces less recovery and marked seed sensitivity."
+    },
+    "mask_only_inverse_reg": {
+      "label": "Gates only · density-promoting",
+      "short": "Gates · dense",
+      "accuracy": 69.741918,
+      "cka_core": 0.604650,
+      "cka_damage": 0.764097,
+      "pos_centroid": 0.642498,
+      "head_rdm": 1.0,
+      "active_gates": 34.733072,
+      "trainable": ["gates"],
+      "summary": "Surviving gate parameters adapt; pretrained encoder weights and the original POS readout remain fixed.",
+      "implication": "The strongest gate-only route moves most toward core-like geometry but remains well below core accuracy."
+    },
+    "readout_only": {
+      "label": "Readout only",
+      "short": "Readout only",
+      "accuracy": 80.001591,
+      "cka_core": 0.433569,
+      "cka_damage": 1.0,
+      "pos_centroid": 0.325838,
+      "head_rdm": 0.539025,
+      "active_gates": 24.239247,
+      "trainable": ["readout"],
+      "summary": "The linear POS classifier adapts; encoder weights, gates, and the damaged representation remain fixed.",
+      "implication": "A new readout extracts substantial POS information without any encoder-representation change."
+    },
+    "readout_and_mask_reg": {
+      "label": "Gates + readout",
+      "short": "Gates + readout",
+      "accuracy": 85.879031,
+      "cka_core": 0.514219,
+      "cka_damage": 0.872295,
+      "pos_centroid": 0.528725,
+      "head_rdm": 0.689791,
+      "active_gates": 21.420477,
+      "trainable": ["gates", "readout"],
+      "summary": "Surviving gates and the linear POS classifier adapt together; pretrained encoder weights remain fixed.",
+      "implication": "Joint adaptation outperforms either mechanism alone despite remaining closer to damaged than core geometry."
+    },
+    "encoder_only": {
+      "label": "Encoder only",
+      "short": "Encoder only",
+      "accuracy": 92.317175,
+      "cka_core": 0.787886,
+      "cka_damage": 0.305340,
+      "pos_centroid": 0.506665,
+      "head_rdm": 1.0,
+      "active_gates": 24.239247,
+      "trainable": ["encoder"],
+      "summary": "Surviving pretrained encoder weights adapt; the lesion, gate configuration, and original POS readout remain fixed.",
+      "implication": "The highest-capacity route nearly restores accuracy and global CKA, but not the original POS-centroid geometry."
+    }
+  },
+  "seeds": {
+    "core": [94.985485, 95.092854, 95.045135, 95.061041, 94.965602],
+    "damage": [16.829045, 17.023899, 9.321191, 17.119338, 16.741560],
+    "mask_only_no_reg": [56.527618, 49.453215, 63.617927, 56.122003, 57.971130],
+    "mask_only_reg": [53.358253, 41.444307, 61.017219, 46.745139, 55.597089],
+    "mask_only_inverse_reg": [69.741918, 64.182606, 73.611166, 68.970454, 69.825426],
+    "encoder_only": [92.317175, 92.325128, 92.424544, 91.839981, 92.138227],
+    "readout_only": [80.001591, 77.607667, 79.874339, 78.343341, 77.070824],
+    "readout_and_mask_reg": [85.879031, 85.994353, 85.879031, 85.656341, 85.863125]
+  },
+  "lesion": {
+    "qkv_groups": 74,
+    "dense_tensors": 18,
+    "clamped_entries": 37248,
+    "dense_breakdown": {
+      "attention_output": 5,
+      "ffn_intermediate": 9,
+      "ffn_output": 4
+    }
+  }
+}

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive companion to Multiple Recovery Paths in a Lesioned Transformer by Lorenzo Cannata and Uri Hasson, BlackboxNLP 2026.">
+  <meta name="theme-color" content="#f4f0e8">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='29' fill='%23f7f3ea' stroke='%2317222c' stroke-width='4'/%3E%3Cpath d='m16 25 8 7-8 7m32-14-8 7 8 7M26 32h12' fill='none' stroke='%2317222c' stroke-width='4'/%3E%3C/svg%3E">
+  <title>Multiple Recovery Paths in a Lesioned Transformer</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the research exhibit</a>
+  <header class="masthead">
+    <a class="wordmark" href="#top" aria-label="Recovery Paths home">
+      <span class="wordmark-mark" aria-hidden="true">×→</span>
+      <span>Recovery Paths</span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="#experiment">Experiment</a>
+      <a href="#results">Results</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#controls">Controls</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="paper-title">
+      <div class="hero-copy">
+        <p class="eyebrow">BlackboxNLP 2026 · Main Track · Poster #192</p>
+        <h1 id="paper-title">Multiple Recovery Paths in a <em>Lesioned Transformer</em></h1>
+        <p class="subtitle">Internal Rerouting and Readout Remapping</p>
+        <p class="authors">Lorenzo Cannata <span aria-hidden="true">·</span> Uri Hasson</p>
+        <p class="finding">A sparse configuration can be necessary for the original model—yet cease to be necessary once the damaged system is allowed to adapt.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#experiment">Explore the experiment</a>
+          <a class="button" href="https://blackboxnlp.github.io/2026/accepted_papers/">Official acceptance listing</a>
+        </div>
+      </div>
+      <div class="hero-result" aria-label="Headline result">
+        <div class="score core-score"><span>94.98</span><small>core</small></div>
+        <div class="drop" aria-hidden="true"><span>lesion</span><b>↓</b></div>
+        <div class="score damaged-score"><span>16.82</span><small>damaged</small></div>
+        <div class="recover" aria-hidden="true"><span>adapt</span><b>↗</b></div>
+        <div class="score joint-score"><span>85.87</span><small>gates + readout</small></div>
+        <p>Held-out UD-EWT POS accuracy, primary run (%)</p>
+      </div>
+    </section>
+
+    <section class="exhibit" id="experiment" aria-labelledby="experiment-title">
+      <div class="section-heading">
+        <p class="eyebrow">Interactive experiment</p>
+        <h2 id="experiment-title">Lesion the route. Keep the lesion fixed. Change what may adapt.</h2>
+        <p>Use the stages or press play. Select a recovery pathway at stages C–D. The schematic encodes parameter status; animated flow is illustrative, not measured activation flow.</p>
+      </div>
+
+      <div class="stage-controls" aria-label="Experiment stages">
+        <button class="play-control" id="play-stage" type="button" aria-label="Play stages"><span aria-hidden="true">▶</span> Play</button>
+        <div class="stage-tabs" role="tablist" aria-label="Experiment stage">
+          <button role="tab" aria-label="Stage A: learn the sparse core" aria-selected="true" data-stage="0"><b>A</b><span>Learn core</span></button>
+          <button role="tab" aria-label="Stage B: apply the structural lesion" aria-selected="false" data-stage="1"><b>B</b><span>Apply lesion</span></button>
+          <button role="tab" aria-label="Stage C: choose a recovery path" aria-selected="false" data-stage="2"><b>C</b><span>Choose recovery</span></button>
+          <button role="tab" aria-label="Stage D: inspect recovery" aria-selected="false" data-stage="3"><b>D</b><span>Compare outcome</span></button>
+        </div>
+        <label class="scrubber-label" for="stage-scrubber">Stage <output id="stage-output">A</output></label>
+        <input id="stage-scrubber" type="range" min="0" max="3" step="1" value="0">
+      </div>
+
+      <div class="pathway-tabs" role="tablist" aria-label="Recovery pathway">
+        <button role="tab" aria-selected="true" data-condition="mask_only_inverse_reg"><span class="symbol gate-symbol" aria-hidden="true">○</span> Gates only</button>
+        <button role="tab" aria-selected="false" data-condition="readout_only"><span class="symbol readout-symbol" aria-hidden="true">◆</span> Readout only</button>
+        <button role="tab" aria-selected="false" data-condition="readout_and_mask_reg"><span class="symbol joint-symbol" aria-hidden="true">○◆</span> Gates + readout</button>
+        <button role="tab" aria-selected="false" data-condition="encoder_only"><span class="symbol encoder-symbol" aria-hidden="true">△</span> Encoder only</button>
+      </div>
+
+      <div class="experiment-grid">
+        <article class="model-panel" aria-labelledby="stage-title">
+          <div class="model-panel-head">
+            <div>
+              <p class="kicker" id="stage-kicker">Stage A</p>
+              <h3 id="stage-title">Learn a sparse task-sufficient configuration</h3>
+            </div>
+            <div class="stage-score"><strong id="stage-score">94.98%</strong><span>POS accuracy</span></div>
+          </div>
+          <div id="model-schematic" class="model-schematic" role="img" aria-label="Schematic of gated BERT encoder and POS readout"></div>
+          <p class="schematic-note"><strong>Schematic.</strong> Columns represent Q, K, V, attention-output, FFN-intermediate, and FFN-output projection masks. Q/K/V marks are 64-wide input-feature groups, not conventional attention-head-output ablations. Marks summarize real layer-level gate statistics; they are not neurons or causal activation paths.</p>
+        </article>
+
+        <aside class="state-panel" aria-live="polite">
+          <div class="state-copy">
+            <p class="kicker">What changes</p>
+            <h3 id="condition-title">Gates only · density-promoting</h3>
+            <p id="condition-summary">Surviving gate parameters adapt; pretrained encoder weights and the original POS readout remain fixed.</p>
+          </div>
+          <div class="component-status" id="component-status" aria-label="Parameter status"></div>
+          <dl class="metric-pair">
+            <div><dt>Accuracy</dt><dd id="condition-accuracy">69.74%</dd></div>
+            <div><dt>CKA to core</dt><dd id="condition-cka">0.60</dd></div>
+          </dl>
+          <p class="metric-caveat">CKA is a similarity measure, not a percentage of circuitry restored.</p>
+        </aside>
+      </div>
+
+      <div class="layer-inspector">
+        <div>
+          <p class="kicker">Empirical gate map</p>
+          <h3>Inspect a layer</h3>
+          <p>Choose a BERT layer to compare the measured baseline and damaged gate sparsity. The permanent lesion never reopens.</p>
+        </div>
+        <div class="layer-buttons" id="layer-buttons" aria-label="BERT layer selection"></div>
+        <div class="layer-detail" id="layer-detail" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="readout-section" id="readout" aria-labelledby="readout-title">
+      <div class="section-heading narrow">
+        <p class="eyebrow">Why readout-only recovery matters</p>
+        <h2 id="readout-title">The representation can stay damaged while the interface learns how to read it.</h2>
+        <p>Readout-only recovery changes the 17-way linear POS classifier and nothing inside the encoder. Accuracy rises from 16.82% to 80.00% while the hidden-state representation remains exactly unchanged.</p>
+      </div>
+      <div class="readout-grid">
+        <article class="concept-card representation-card">
+          <div class="card-label">Empirical representation explorer · primary seed 42</div>
+          <div class="representation-controls" id="representation-controls" role="tablist" aria-label="Representation condition"></div>
+          <div class="representation-state" aria-live="polite">
+            <strong id="representation-title">Loading empirical states…</strong>
+            <span><b id="representation-full-accuracy">—</b> full dev · <b id="representation-sample-accuracy">—</b> balanced panel</span>
+          </div>
+          <svg id="representation-map" viewBox="0 0 720 500" role="img" aria-labelledby="representation-map-title representation-map-desc">
+            <title id="representation-map-title">Shared PCA projection of final hidden states</title>
+            <desc id="representation-map-desc">A selectable map of the same 816 tokens under six experimental conditions.</desc>
+          </svg>
+          <p class="concept-caption"><strong>PC1 and PC2 are the two highest-variance directions in the intact core model’s 768-dimensional final hidden states.</strong> The same 816 POS-balanced tokens appear in every state. The frozen basis and fixed axes make coordinates comparable. The view shows 23.32% of total variance; it is neither a POS axis nor the classifier boundary. Blue circles are correct predictions; red crosses are errors.</p>
+        </article>
+        <article class="empirical-card">
+          <div class="card-label">Readout-only contrast · primary run</div>
+          <div class="fixed-representation">
+            <span class="fixed-bracket" aria-hidden="true"></span>
+            <div><strong>0.4336</strong><span>CKA to core</span></div>
+            <div><strong>1.0000</strong><span>CKA to damage</span></div>
+          </div>
+          <div class="readout-shift">
+            <div><span>Damaged + unchanged core readout</span><strong>16.82%</strong></div>
+            <div class="shift-arrow" aria-hidden="true">same hidden states → new linear map</div>
+            <div><span>Damaged + retrained readout</span><strong>80.00%</strong></div>
+          </div>
+          <p>The actual comparison uses the same ordered 25,147 development tokens and their raw 768-dimensional final hidden states. No independent 2D embedding is compared.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="results-section" id="results" aria-labelledby="results-title">
+      <div class="section-heading">
+        <p class="eyebrow">Linked results explorer</p>
+        <h2 id="results-title">Performance and representational return are related—but not interchangeable.</h2>
+      </div>
+      <div class="results-layout">
+        <div class="results-controls" id="results-controls" role="listbox" aria-label="Select condition"></div>
+        <article class="results-chart" aria-labelledby="scatter-title">
+          <div class="chart-head">
+            <div><p class="kicker">Primary-run endpoints</p><h3 id="scatter-title">Accuracy vs. CKA to core</h3></div>
+            <p>Higher and farther right means more accurate and more core-like—not more “recovered circuitry.”</p>
+          </div>
+          <svg id="accuracy-cka-chart" viewBox="0 0 760 500" role="img" aria-labelledby="scatter-title scatter-desc">
+            <desc id="scatter-desc">Scatter plot comparing POS accuracy and CKA similarity to the core across recovery conditions.</desc>
+          </svg>
+          <div class="selected-result" id="selected-result" aria-live="polite"></div>
+        </article>
+      </div>
+      <div class="seed-strip">
+        <div><p class="kicker">Robustness</p><h3>Five seeds preserve the ordering</h3><p>Individual runs are shown; the line spans the observed minimum to maximum. With five seeds, these are descriptive—not confidence intervals.</p></div>
+        <div id="seed-chart" class="seed-chart" role="img" aria-label="Five-seed accuracy ranges by condition"></div>
+      </div>
+    </section>
+
+    <section class="evidence-section" id="evidence" aria-labelledby="evidence-title">
+      <div class="section-heading">
+        <p class="eyebrow">Explore the evidence</p>
+        <h2 id="evidence-title">Inspect gate structure and per-tag recovery</h2>
+        <p>Switch views and conditions to inspect the exported measurements directly. Values are inactive-gate percentages or POS accuracy relative to the core baseline.</p>
+      </div>
+      <div class="evidence-explorer">
+        <div class="evidence-tabs" id="evidence-tabs" role="tablist" aria-label="Evidence view">
+          <button type="button" role="tab" data-evidence="qkv" aria-selected="true">Q/K/V gate map</button>
+          <button type="button" role="tab" data-evidence="dense" aria-selected="false">Dense projections</button>
+          <button type="button" role="tab" data-evidence="pos" aria-selected="false">POS recovery</button>
+        </div>
+        <div class="evidence-head">
+          <div><p class="kicker" id="evidence-kicker"></p><h3 id="evidence-chart-title"></h3></div>
+          <div class="evidence-options" id="evidence-options" aria-label="Evidence comparison"></div>
+        </div>
+        <div class="evidence-chart-scroll">
+          <svg id="evidence-chart" viewBox="0 0 900 500" role="img" aria-labelledby="evidence-chart-title evidence-chart-desc">
+            <desc id="evidence-chart-desc"></desc>
+          </svg>
+        </div>
+        <p class="evidence-note" id="evidence-note" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="controls-section" id="controls" aria-labelledby="controls-title">
+      <div class="section-heading narrow">
+        <p class="eyebrow">Controls and limits</p>
+        <h2 id="controls-title">What the lesion establishes—and what it does not.</h2>
+      </div>
+      <div class="control-grid">
+        <article>
+          <span class="control-number">74</span>
+          <h3>Q/K/V input groups</h3>
+          <p>The learned Q/K/V-only lesion reaches 84.84%, versus a random mean of 88.02%; 0/100 random lesions were as damaging.</p>
+        </article>
+        <article>
+          <span class="control-number">18</span>
+          <h3>Dense projection gates</h3>
+          <p>The severe main lesion additionally clamps 5 attention-output, 9 FFN-intermediate, and 4 FFN-output projection masks.</p>
+        </article>
+        <article>
+          <span class="control-number">63/100</span>
+          <h3>Random full lesions</h3>
+          <p>When Q/K/V and dense targets are both randomized, 63/100 are as or more damaging. The exact full target set is not uniquely causal.</p>
+        </article>
+      </div>
+      <figure class="control-figure">
+        <img loading="lazy" src="./assets/plots/random-lesion-controls.png" alt="Matched random lesion control distributions for QKV-only, full fixed-dense, full random-dense, and keep-only interventions">
+        <figcaption>The Q/K/V-only control and the main Q/K/V+dense lesion are different experiments. The recovery study remains a test of adaptation after a severe structured lesion.</figcaption>
+      </figure>
+      <div class="limits">
+        <h3>Scope of the claim</h3>
+        <ul>
+          <li>One backbone: <code>bert-base-uncased</code>.</li>
+          <li>One supervised task: 17-way POS tagging on UD English-EWT.</li>
+          <li>A learned linear task readout, not BERT’s native language-model output.</li>
+          <li>Recovery depends on which components are permitted to adapt.</li>
+          <li>No direct evidence about biological lesion or recovery mechanisms.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Interactive companion for BlackboxNLP 2026 · Budapest · October 29, 2026</p>
+    <a href="#top">Back to top ↑</a>
+  </footer>
+</body>
+</html>
