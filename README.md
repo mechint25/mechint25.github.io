@@ -10,25 +10,19 @@ Static research companion for *Multiple Recovery Paths in a Lesioned Transformer
 4. `assets/data/site-data.json` contains the public endpoint and seed values.
 5. `assets/data/representation-states.json` contains the six final-state, fixed-basis token projections used by the interactive representation explorer.
 6. `SOURCE_MANIFEST.md` traces claims and visuals to configurations, experiment records, checksums, and known discrepancies.
-7. `scripts/build_research_assets.py` regenerates the A0 portrait SVG/PDF poster and its three reusable vector figures from checked-in evidence tables.
+7. `scripts/build_research_assets.py` regenerates the A0 portrait poster, portable outlined SVG, and three reusable vector figures from checked-in evidence tables.
 
 The page has no runtime dependencies, backend, secrets, or absolute asset paths. All links are relative so it works under a repository subpath on GitHub Pages.
 
 ## Regenerate the poster
 
-The generation-only script needs Python 3.10+ and ReportLab; the browser site itself still has no dependencies. ReportLab produces the editable SVG and the print-sized vector PDF from one drawing source.
+The generation-only script needs Python 3.10+, ReportLab, and Poppler; the browser site itself still has no dependencies. One drawing source produces an editable SVG with embedded Bitstream Vera Sans fonts, a print-sized vector PDF with embedded font subsets, a portable outlined SVG, and the PNG preview.
 
 ```bash
 python scripts/build_research_assets.py
 ```
 
-The poster is A0 portrait (841 x 1189 mm). To regenerate its 150 dpi PNG preview with Poppler:
-
-```bash
-pdftoppm -f 1 -singlefile -r 150 -png \
-  assets/figures/recovery-paths-poster.pdf \
-  assets/figures/recovery-paths-poster
-```
+The poster is A0 portrait (841 x 1189 mm). The editable SVG retains live text; use the outlined SVG when font-independent display matters. The generator recreates the 150 dpi preview and both SVG variants automatically.
 
 ## Local preview
 

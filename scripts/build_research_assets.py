@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Generate the empirical readout asset and the A0 portrait conference poster."""
+"""Generate editable, outlined, and print versions of the A0 research poster."""
 
 from __future__ import annotations
 
+import base64
 import csv
 import json
+import math
+import shutil
+import subprocess
 from pathlib import Path
 
+import reportlab
 from reportlab.graphics import renderPDF, renderSVG
 from reportlab.graphics.shapes import Circle, Drawing, Line, Polygon, Rect, String
 from reportlab.lib.colors import HexColor
@@ -22,15 +27,17 @@ W, H = 2384, 3370  # A0 portrait: 841 x 1189 mm at 72 pt/in.
 WHITE, INK, MUTED, RULE = "#FFFFFF", "#142536", "#536575", "#C8D2DB"
 BLUE, PALE_BLUE = "#123F67", "#EAF2F8"
 GATE, LESION, READOUT, ENCODER, DAMAGE = "#138C82", "#20262B", "#B43F7A", "#D27A20", "#C64A3A"
-LIGHT, SOFT = "#F5F8FA", "#E8EDF1"
-FONT_PATH = "/System/Library/Fonts/Supplemental/Arial.ttf"
-BOLD_PATH = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
-pdfmetrics.registerFont(TTFont("PosterSans", FONT_PATH))
-pdfmetrics.registerFont(TTFont("PosterSans-Bold", BOLD_PATH))
+SOFT = "#F5F8FA"
+FONT_DIR = Path(reportlab.__file__).resolve().parent / "fonts"
+FONT_PATH = FONT_DIR / "Vera.ttf"
+BOLD_PATH = FONT_DIR / "VeraBd.ttf"
+REGULAR, BOLD = "Vera", "Vera-Bold"
+pdfmetrics.registerFont(TTFont(REGULAR, str(FONT_PATH)))
+pdfmetrics.registerFont(TTFont(BOLD, str(BOLD_PATH)))
 
 
 class Page:
-    """Small top-origin drawing helper used by the poster and reusable figures."""
+    """Top-origin vector drawing helper with measured text boxes."""
 
     def __init__(self, drawing: Drawing, height: float) -> None:
         self.drawing = drawing
@@ -45,8 +52,20 @@ class Page:
             item.strokeDashArray = dash
         self.drawing.add(item)
 
-    def text(self, x: float, top: float, value: str, size: float, color: str = INK, bold: bool = False, anchor: str = "start") -> None:
-        self.drawing.add(String(x, self.height - top - size, value, fontName="PosterSans-Bold" if bold else "PosterSans", fontSize=size, fillColor=HexColor(color), textAnchor=anchor))
+    def arrow(self, x1: float, top1: float, x2: float, top2: float, color: str, width: float = 4, head: float = 14, dash: list[int] | None = None) -> None:
+        """Draw a directed line with a consistent filled arrowhead."""
+        self.line(x1, top1, x2, top2, color, width, dash)
+        angle = math.atan2(top2 - top1, x2 - x1)
+        back_x, back_y = x2 - head * math.cos(angle), top2 - head * math.sin(angle)
+        side = head * 0.55
+        self.polygon(
+            [
+                (x2, top2),
+                (back_x + side * math.sin(angle), back_y - side * math.cos(angle)),
+                (back_x - side * math.sin(angle), back_y + side * math.cos(angle)),
+            ],
+            color,
+        )
 
     def circle(self, x: float, top: float, radius: float, fill: str, stroke: str | None = None, width: float = 1) -> None:
         self.drawing.add(Circle(x, self.height - top, radius, fillColor=HexColor(fill), strokeColor=HexColor(stroke) if stroke else None, strokeWidth=width))
@@ -55,47 +74,59 @@ class Page:
         flat = [coordinate for x, top in points for coordinate in (x, self.height - top)]
         self.drawing.add(Polygon(flat, fillColor=HexColor(fill), strokeColor=HexColor(stroke) if stroke else None, strokeWidth=width))
 
-
-def wrap(page: Page, text: str, x: float, top: float, width: float, size: float = 27, leading: float = 36, color: str = INK, bold: bool = False) -> float:
-    """Draw plain wrapped text and return the next top coordinate."""
-    font = "PosterSans-Bold" if bold else "PosterSans"
-    line = ""
-    for word in text.split():
-        candidate = f"{line} {word}".strip()
-        if line and pdfmetrics.stringWidth(candidate, font, size) > width:
-            page.text(x, top, line, size, color, bold)
-            top += leading
-            line = word
-        else:
-            line = candidate
-    if line:
-        page.text(x, top, line, size, color, bold)
-        top += leading
-    return top
-
-
-def section(page: Page, x: float, top: float, width: float, name: str, subtitle: str | None = None) -> float:
-    """Draw a navy section heading and optional descriptive figure title."""
-    page.text(x, top, name, 39, BLUE, True)
-    page.line(x, top + 52, x + width, top + 52, BLUE, 3)
-    if subtitle:
-        page.text(x, top + 68, subtitle, 29, INK, True)
-        return top + 112
-    return top + 70
+    def text_box(self, x: float, top: float, width: float, height: float, value: str, size: float, color: str = INK, bold: bool = False, align: str = "left", leading: float | None = None, wrap: bool = False) -> None:
+        """Draw measured text inside an explicit box or raise on overflow."""
+        if x < 0 or top < 0 or x + width > W + 0.1 or top + height > self.height + 0.1:
+            raise ValueError(f"Text box outside page: {(x, top, width, height, value[:30])}")
+        font = BOLD if bold else REGULAR
+        line_height = leading or size * 1.25
+        lines = wrap_lines(value, font, size, width) if wrap else value.split("\n")
+        required_height = size + max(0, len(lines) - 1) * line_height
+        if required_height > height + 0.1:
+            raise ValueError(f"Text box height overflow ({len(lines)} lines): {value[:80]}")
+        anchor = {"left": "start", "center": "middle", "right": "end"}[align]
+        text_x = {"left": x, "center": x + width / 2, "right": x + width}[align]
+        for index, line_value in enumerate(lines):
+            measured = pdfmetrics.stringWidth(line_value, font, size)
+            if measured > width + 0.1:
+                raise ValueError(f"Text box width overflow ({measured:.1f}>{width:.1f}): {line_value}")
+            baseline_top = top + index * line_height + size
+            self.drawing.add(String(text_x, self.height - baseline_top, line_value, fontName=font, fontSize=size, fillColor=HexColor(color), textAnchor=anchor))
 
 
-def symbol(page: Page, x: float, top: float, kind: str, color: str, size: float = 18, active: bool = True) -> None:
-    """Draw the redundant shape-and-colour parameter-status symbols."""
-    fill = color if active else WHITE
-    if kind == "gate":
-        page.circle(x, top, size, fill, color, 4)
-    elif kind == "readout":
-        page.polygon([(x, top - size), (x + size, top), (x, top + size), (x - size, top)], fill, color, 4)
-    elif kind == "encoder":
-        page.polygon([(x, top - size), (x + size, top + size), (x - size, top + size)], fill, color, 4)
-    else:
-        page.line(x - size, top - size, x + size, top + size, color, 5)
-        page.line(x + size, top - size, x - size, top + size, color, 5)
+def wrap_lines(value: str, font: str, size: float, width: float) -> list[str]:
+    """Wrap text using the exact TrueType font used for rendering."""
+    lines: list[str] = []
+    for paragraph in value.split("\n"):
+        current = ""
+        for word in paragraph.split():
+            candidate = f"{current} {word}".strip()
+            if current and pdfmetrics.stringWidth(candidate, font, size) > width:
+                lines.append(current)
+                current = word
+            else:
+                current = candidate
+        lines.append(current)
+    return lines
+
+
+def section_heading(page: Page, x: float, top: float, width: float, title: str, tag: str | None = None) -> None:
+    """Draw a restrained academic heading and optional aggregation tag."""
+    page.text_box(x, top, width, 45, title, 36, BLUE, True)
+    if tag:
+        page.text_box(x, top + 7, width, 34, tag, 21, MUTED, True, "right")
+    page.line(x, top + 50, x + width, top + 50, BLUE, 2.5)
+
+
+def cross(page: Page, x: float, top: float, size: float = 12, color: str = LESION, width: float = 4) -> None:
+    """Draw the permanent-lesion mark."""
+    page.line(x - size, top - size, x + size, top + size, color, width)
+    page.line(x + size, top - size, x - size, top + size, color, width)
+
+
+def diamond(page: Page, x: float, top: float, size: float, fill: str, stroke: str | None = None, width: float = 1) -> None:
+    """Draw a diamond marker."""
+    page.polygon([(x, top - size), (x + size, top), (x, top + size), (x - size, top)], fill, stroke, width)
 
 
 def load_data() -> tuple[dict, list[dict[str, str]]]:
@@ -108,59 +139,129 @@ def load_data() -> tuple[dict, list[dict[str, str]]]:
     return site, tokens
 
 
+def draw_encoder(page: Page, x: float, top: float, width: float, height: float) -> None:
+    """Draw encoder layers and projection-specific gate locations."""
+    page.rect(x, top, width, height, PALE_BLUE, BLUE, 6, 2)
+    page.text_box(x + 20, top + 14, width - 40, 30, "BERT-base encoder", 23, BLUE, True)
+    page.text_box(x + 210, top + 17, width - 230, 26, "projection-specific input-feature gates", 18, MUTED, False, "right")
+    labels = ["Q", "K", "V", "AO", "FI", "FO"]
+    gate_x = x + 315
+    for index, label in enumerate(labels):
+        page.text_box(gate_x + index * 61, top + 53, 48, 24, label, 17, GATE, True, "center")
+    for row_index, layer in enumerate(["Layer 0", "Layer 1", "...", "Layer 11"]):
+        row_top = top + 82 + row_index * 40
+        page.rect(x + 22, row_top, 245, 30, WHITE, RULE, 3, 1)
+        page.text_box(x + 36, row_top + 2, 215, 25, layer, 17, INK, layer != "...")
+        if layer == "...":
+            continue
+        for gate_index in range(6):
+            gx = gate_x + gate_index * 61
+            page.rect(gx, row_top + 5, 48, 20, WHITE, GATE, 2, 2)
+            page.text_box(gx, row_top + 3, 48, 20, "g", 14, GATE, True, "center")
+        if row_index < 2:
+            cross(page, gate_x + (row_index + 1) * 61 + 24, row_top + 15, 8, LESION, 3)
+
+
+def draw_pipeline(page: Page, top: float) -> None:
+    """Draw the computational sequence from tokens to predicted tags."""
+    page.text_box(80, top, 400, 28, "COMPUTATION", 18, BLUE, True)
+    page.rect(90, top + 70, 205, 102, WHITE, RULE, 6, 2)
+    page.text_box(105, top + 85, 175, 27, "Input tokens", 22, INK, True, "center")
+    page.text_box(105, top + 124, 175, 28, "[The] [dog] [runs]", 18, MUTED, False, "center")
+    draw_encoder(page, 350, top + 18, 730, 250)
+
+    page.rect(1190, top + 70, 260, 118, SOFT, RULE, 5, 2)
+    page.text_box(1205, top + 84, 230, 28, "Final hidden states", 21, INK, True, "center")
+    for row in range(3):
+        for col in range(8):
+            shade = PALE_BLUE if (row + col) % 3 else BLUE
+            page.rect(1240 + col * 22, top + 125 + row * 18, 13, 11, shade, BLUE if shade == PALE_BLUE else None, 1, 0.5)
+    page.text_box(1210, top + 172, 220, 20, "one 768-d vector per token", 15, MUTED, False, "center")
+
+    page.rect(1570, top + 70, 230, 118, WHITE, READOUT, 5, 3)
+    page.text_box(1580, top + 87, 210, 28, "Linear POS readout", 19, READOUT, True, "center")
+    page.text_box(1590, top + 132, 190, 26, "W h + b", 22, INK, True, "center")
+    page.text_box(1590, top + 164, 190, 20, "17 output scores", 15, MUTED, False, "center")
+
+    page.rect(1940, top + 52, 334, 154, WHITE, RULE, 5, 2)
+    page.text_box(1960, top + 67, 294, 28, "Predicted tags", 21, INK, True, "center")
+    page.text_box(1960, top + 112, 294, 56, "DET   NOUN   VERB\n... one tag per token", 18, MUTED, False, "center", 28)
+
+    center_y = top + 129
+    for start, end in [(295, 342), (1080, 1182), (1450, 1562), (1800, 1932)]:
+        page.arrow(start, center_y, end, center_y, BLUE, 4, 14)
+
+
+def status_cell(page: Page, x: float, top: float, width: float, value: str, color: str) -> None:
+    """Draw an explicit trainability cell without reusing gate-state symbols."""
+    fill = color if value == "TRAIN" else SOFT
+    stroke = color if value in {"TRAIN", "OFF"} else RULE
+    text_color = WHITE if value == "TRAIN" else color
+    page.rect(x, top, width, 31, fill, stroke, 3, 1.5)
+    page.text_box(x, top + 3, width, 23, value, 14, text_color, True, "center")
+
+
 def draw_framework(page: Page, top: float) -> None:
-    """Draw the large learn-lesion-recover schematic at implementation granularity."""
-    y = section(page, 80, top, 2224, "Experimental framework", "Learn a sparse task-sufficient route, hold the lesion fixed, then vary what can adapt")
-    cols = [(80, 690, "A", "Learn the sparse core"), (820, 520, "B", "Apply a permanent lesion"), (1390, 914, "C", "Compare recovery pathways")]
-    for x, width, letter, title in cols:
-        page.text(x, y, letter, 33, BLUE, True)
-        page.text(x + 48, y + 2, title, 30, INK, True)
-        page.line(x, y + 47, x + width, y + 47, RULE, 2)
+    """Draw the dominant method figure and recovery trainability table."""
+    section_heading(page, 80, top, 2224, "Experimental framework")
+    draw_pipeline(page, top + 72)
 
-    for i in range(5):
-        layer_top = y + 92 + i * 55
-        page.rect(118, layer_top, 330, 38, PALE_BLUE, BLUE, 6, 1.5)
-        page.text(135, layer_top + 5, f"BERT layer {i if i < 4 else '... 11'}", 19, BLUE, True)
-        for j in range(5):
-            symbol(page, 485 + j * 38, layer_top + 19, "gate", GATE, 8, active=(i + j) % 3 != 0)
-    page.line(448, y + 218, 650, y + 218, BLUE, 4)
-    page.polygon([(650, y + 218), (630, y + 206), (630, y + 230)], BLUE)
-    symbol(page, 688, y + 218, "readout", READOUT, 20)
-    page.text(688, y + 255, "17-way POS readout", 19, READOUT, True, "middle")
-    wrap(page, "Projection-specific hard-concrete gates and a linear readout train jointly; pretrained BERT weights remain fixed.", 118, y + 382, 610, 23, 31, MUTED)
+    band_top = top + 365
+    page.text_box(80, band_top, 500, 27, "EXPERIMENTAL PROGRESSION", 18, ENCODER, True)
+    a_x, a_w = 80, 575
+    b_x, b_w = 710, 470
+    c_x, c_w = 1235, 1069
+    box_top, box_h = band_top + 42, 338
+    for x, width in [(a_x, a_w), (b_x, b_w), (c_x, c_w)]:
+        page.rect(x, box_top, width, box_h, WHITE, RULE, 5, 1.5)
 
-    page.rect(860, y + 90, 430, 180, LIGHT, RULE, 8, 1.5)
-    for i, label in enumerate(["Q / K / V", "Attn out", "FFN in", "FFN out"]):
-        page.text(890, y + 112 + i * 37, label, 21, INK, i == 0)
-        symbol(page, 1225, y + 124 + i * 37, "lesion", LESION, 11)
-    page.text(1075, y + 300, "mask score = -12", 23, LESION, True, "middle")
-    page.text(1075, y + 334, "gradient blocked", 22, LESION, False, "middle")
-    wrap(page, "The selected mask entries are forced to zero and frozen. No recovery condition can reactivate a lesioned component.", 860, y + 382, 430, 23, 31, MUTED)
+    page.text_box(a_x + 22, box_top + 18, a_w - 44, 32, "A  Learn the task-sufficient core", 23, BLUE, True)
+    page.text_box(a_x + 22, box_top + 67, a_w - 44, 88, "Train projection-specific hard-concrete gates and the linear POS readout while pretrained encoder weights remain fixed.", 19, INK, False, "left", 27, True)
+    page.text_box(a_x + 22, box_top + 176, 165, 25, "Gates", 18, GATE, True)
+    status_cell(page, a_x + 205, box_top + 171, 105, "TRAIN", GATE)
+    page.text_box(a_x + 22, box_top + 219, 165, 25, "Readout", 18, READOUT, True)
+    status_cell(page, a_x + 205, box_top + 214, 105, "TRAIN", READOUT)
+    page.text_box(a_x + 22, box_top + 262, 175, 25, "Encoder weights", 18, ENCODER, True)
+    status_cell(page, a_x + 205, box_top + 257, 105, "FIXED", ENCODER)
+    page.text_box(a_x + 335, box_top + 174, 215, 105, "The sparse configuration reaches 94.98% primary-run POS accuracy.", 18, MUTED, False, "left", 26, True)
 
-    pathways = [
-        ("Gates only", True, False, False, "surviving gates change"),
-        ("Readout only", False, True, False, "same damaged representation"),
-        ("Gates + readout", True, True, False, "routing and interface adapt"),
-        ("Encoder only", False, False, True, "surviving BERT weights change"),
+    page.text_box(b_x + 22, box_top + 18, b_w - 44, 32, "B  Apply a permanent lesion", 23, BLUE, True)
+    cross(page, b_x + 58, box_top + 100, 19, LESION, 6)
+    page.text_box(b_x + 96, box_top + 72, b_w - 120, 72, "Mask scores forced to -12; effective gates are zero and gradients are blocked.", 18, INK, True, "left", 26, True)
+    page.text_box(b_x + 22, box_top + 171, b_w - 44, 78, "74 Q/K/V 64-coordinate input groups\n5 attention-output gate tensors\n9 FFN-intermediate + 4 FFN-output tensors", 17, MUTED, False, "left", 25)
+    page.text_box(b_x + 22, box_top + 274, b_w - 44, 44, "No recovery pathway can reactivate these entries.", 18, LESION, True, "left", 24, True)
+
+    page.text_box(c_x + 22, box_top + 18, c_w - 44, 32, "C  Recovery trainability", 23, BLUE, True)
+    table_x = c_x + 22
+    columns = [(0, 300, "Condition"), (310, 160, "Gates"), (480, 170, "Readout"), (660, 175, "Encoder"), (845, 175, "Lesion")]
+    for offset, width, label in columns:
+        page.text_box(table_x + offset, box_top + 62, width, 24, label, 16, MUTED, True, "center" if offset else "left")
+    rows = [
+        ("Gates only", "TRAIN", "FIXED", "FIXED", "OFF"),
+        ("Readout only", "FIXED", "TRAIN", "FIXED", "OFF"),
+        ("Gates + readout", "TRAIN", "TRAIN", "FIXED", "OFF"),
+        ("Encoder only", "FIXED", "FIXED", "TRAIN", "OFF"),
     ]
-    for i, (name, gates, readout, encoder, note) in enumerate(pathways):
-        row = y + 82 + i * 86
-        page.text(1420, row, name, 24, INK, True)
-        symbol(page, 1745, row + 13, "gate", GATE, 13, gates)
-        symbol(page, 1825, row + 13, "readout", READOUT, 13, readout)
-        symbol(page, 1905, row + 13, "encoder", ENCODER, 13, encoder)
-        symbol(page, 1985, row + 13, "lesion", LESION, 11)
-        page.text(2040, row + 1, note, 20, MUTED)
-        page.line(1420, row + 57, 2275, row + 57, SOFT, 1)
-    for x, label, color in [(1745, "gates", GATE), (1825, "readout", READOUT), (1905, "encoder", ENCODER), (1985, "lesion", LESION)]:
-        page.text(x, y + 438, label, 17, color, True, "middle")
+    colors = [INK, GATE, READOUT, ENCODER, LESION]
+    for row_index, row in enumerate(rows):
+        row_top = box_top + 96 + row_index * 55
+        page.text_box(table_x, row_top + 4, 300, 28, row[0], 18, INK, True)
+        for col_index, value in enumerate(row[1:], start=1):
+            offset, width, _ = columns[col_index]
+            status_cell(page, table_x + offset + 15, row_top, width - 30, value, colors[col_index])
+        if row_index < len(rows) - 1:
+            page.line(table_x, row_top + 44, c_x + c_w - 22, row_top + 44, SOFT, 1)
 
-    page.rect(80, y + 492, 2224, 100, PALE_BLUE)
-    page.text(110, y + 515, "SETUP", 21, BLUE, True)
-    page.text(245, y + 515, "bert-base-uncased  |  UD English-EWT  |  17 POS tags  |  25,147 held-out development tokens", 22, INK)
-    page.text(110, y + 554, "LESION", 21, BLUE, True)
-    page.text(245, y + 554, "74 Q/K/V 64-wide input groups + 5 attention-output + 9 FFN-intermediate + 4 FFN-output gate tensors", 22, INK)
-    page.text(2304, y + 612, "Schematic: connections illustrate parameter status, not measured activation flow.", 19, MUTED, False, "end")
+    page.arrow(a_x + a_w + 10, box_top + 47, b_x - 10, box_top + 47, ENCODER, 3, 12)
+    page.arrow(b_x + b_w + 10, box_top + 47, c_x - 10, box_top + 47, ENCODER, 3, 12)
+
+    strip_top = top + 765
+    page.rect(80, strip_top, 2224, 80, PALE_BLUE)
+    page.text_box(104, strip_top + 10, 130, 24, "SETUP", 16, BLUE, True)
+    page.text_box(240, strip_top + 10, 1000, 24, "bert-base-uncased | UD English-EWT | 17 POS tags | 25,147 development tokens", 17, INK)
+    page.text_box(104, strip_top + 43, 130, 24, "LESION", 16, BLUE, True)
+    page.text_box(240, strip_top + 43, 1220, 24, "74 Q/K/V groups + 18 dense projection-mask tensors; 37,248 gate entries clamped", 17, INK)
+    page.text_box(1520, strip_top + 9, 750, 52, "Schematic only: arrows show computation or experimental progression, not measured activation flow or traced causal paths.", 15, MUTED, False, "right", 22, True)
 
 
 def draw_performance(page: Page, site: dict, x: float, top: float, width: float, height: float) -> None:
@@ -168,23 +269,31 @@ def draw_performance(page: Page, site: dict, x: float, top: float, width: float,
     keys = ["core", "encoder_only", "readout_and_mask_reg", "readout_only", "mask_only_inverse_reg", "damage"]
     colors = [BLUE, ENCODER, READOUT, READOUT, GATE, DAMAGE]
     labels = ["Core", "Encoder only", "Gates + readout", "Readout only", "Gates only, dense", "Damaged"]
-    chart_x, chart_w = x + 260, width - 340
-    page.line(chart_x, top + height - 48, chart_x + chart_w, top + height - 48, INK, 2)
+    chart_x, chart_w = x + 260, width - 360
+    page.rect(x + 8, top + 4, 18, 13, BLUE)
+    page.text_box(x + 34, top, 150, 24, "mean", 16, MUTED)
+    page.circle(x + 198, top + 11, 6, WHITE, BLUE, 2)
+    page.text_box(x + 212, top, 160, 24, "individual run", 16, MUTED)
+    page.line(x + 402, top + 11, x + 470, top + 11, BLUE, 3)
+    page.text_box(x + 482, top, 190, 24, "observed range", 16, MUTED)
+    axis_top, axis_bottom = top + 42, top + height - 55
     for tick in range(0, 101, 20):
         px = chart_x + chart_w * tick / 100
-        page.line(px, top + 28, px, top + height - 48, SOFT, 1)
-        page.text(px, top + height - 37, str(tick), 18, MUTED, False, "middle")
+        page.line(px, axis_top, px, axis_bottom, SOFT, 1)
+        page.text_box(px - 30, axis_bottom + 8, 60, 24, str(tick), 17, MUTED, False, "center")
     for i, (key, label, color) in enumerate(zip(keys, labels, colors)):
         values = site["seeds"][key]
         avg, lo, hi = sum(values) / len(values), min(values), max(values)
-        cy = top + 53 + i * 59
-        page.text(x + 230, cy - 9, label, 21, INK, key in {"readout_only", "damage"}, "end")
-        page.rect(chart_x, cy - 4, chart_w * avg / 100, 20, color, radius=4)
-        page.line(chart_x + chart_w * lo / 100, cy + 25, chart_x + chart_w * hi / 100, cy + 25, color, 4)
-        for value in values:
-            page.circle(chart_x + chart_w * value / 100, cy + 25, 6, WHITE, color, 3)
-        page.text(x + width - 5, cy - 10, f"{avg:.2f}%", 21, color, True, "end")
-    page.text(chart_x + chart_w / 2, top + height - 7, "Held-out POS accuracy (%)", 20, MUTED, False, "middle")
+        cy = top + 70 + i * 54
+        page.text_box(x, cy - 9, 235, 28, label, 18, INK, key in {"readout_only", "damage"}, "right")
+        page.rect(chart_x, cy - 5, chart_w * avg / 100, 18, color, radius=3)
+        page.line(chart_x + chart_w * lo / 100, cy + 20, chart_x + chart_w * hi / 100, cy + 20, color, 3)
+        for value_index, value in enumerate(values):
+            jitter = [-4, -2, 0, 2, 4][value_index]
+            page.circle(chart_x + chart_w * value / 100, cy + 20 + jitter, 5, WHITE, color, 2)
+        page.text_box(x + width - 82, cy - 9, 82, 28, f"{avg:.2f}%", 18, color, True, "right")
+    page.line(chart_x, axis_bottom, chart_x + chart_w, axis_bottom, INK, 1.5)
+    page.text_box(chart_x, top + height - 32, chart_w, 28, "Held-out POS accuracy (%)", 19, MUTED, False, "center")
 
 
 def draw_cka(page: Page, site: dict, x: float, top: float, width: float, height: float) -> None:
@@ -192,50 +301,63 @@ def draw_cka(page: Page, site: dict, x: float, top: float, width: float, height:
     keys = ["damage", "readout_only", "readout_and_mask_reg", "mask_only_inverse_reg", "encoder_only", "core"]
     labels = {"damage": "Damaged", "readout_only": "Readout only", "readout_and_mask_reg": "Gates + readout", "mask_only_inverse_reg": "Gates only, dense", "encoder_only": "Encoder only", "core": "Core"}
     colors = {"damage": DAMAGE, "readout_only": READOUT, "readout_and_mask_reg": READOUT, "mask_only_inverse_reg": GATE, "encoder_only": ENCODER, "core": BLUE}
-    left, right, upper, lower = x + 92, x + width - 40, top + 30, top + height - 72
+    left, right, upper, lower = x + 92, x + width - 35, top + 26, top + height - 62
     sx = lambda value: left + (value - .4) / .62 * (right - left)
     sy = lambda value: lower - (value - 10) / 90 * (lower - upper)
     for tick in [.4, .5, .6, .7, .8, .9, 1.0]:
         px = sx(tick)
         page.line(px, upper, px, lower, SOFT, 1)
-        page.text(px, lower + 12, f"{tick:.1f}", 17, MUTED, False, "middle")
+        page.text_box(px - 28, lower + 8, 56, 24, f"{tick:.1f}", 17, MUTED, False, "center")
     for tick in [20, 40, 60, 80, 100]:
         py = sy(tick)
         page.line(left, py, right, py, SOFT, 1)
-        page.text(left - 16, py - 10, str(tick), 17, MUTED, False, "end")
+        page.text_box(left - 58, py - 12, 45, 24, str(tick), 17, MUTED, False, "right")
     damage_x = sx(site["conditions"]["damage"]["cka_core"])
     page.line(damage_x, sy(16.82), damage_x, sy(80.00), READOUT, 4, [8, 7])
-    page.text(damage_x + 18, sy(50), "same encoder states", 18, READOUT, True)
-    offsets = {"damage": (14, 12), "readout_only": (14, -28), "readout_and_mask_reg": (14, -28), "mask_only_inverse_reg": (14, 12), "encoder_only": (-10, -30), "core": (-10, -30)}
+    page.text_box(damage_x + 16, sy(54), 250, 48, "identical encoder states", 16, READOUT, True, "left", 21, True)
+    offsets = {
+        "damage": (14, 9, "left"),
+        "readout_only": (14, -29, "left"),
+        "readout_and_mask_reg": (14, -29, "left"),
+        "mask_only_inverse_reg": (14, 9, "left"),
+        "encoder_only": (-220, -29, "right"),
+        "core": (-150, -29, "right"),
+    }
     for key in keys:
         condition = site["conditions"][key]
         px, py = sx(condition["cka_core"]), sy(condition["accuracy"])
         page.circle(px, py, 10, colors[key], WHITE, 3)
-        dx, dy = offsets[key]
-        page.text(px + dx, py + dy, labels[key], 18, INK, True, "end" if dx < 0 else "start")
-    page.text((left + right) / 2, top + height - 22, "Linear CKA to pre-lesion core", 20, MUTED, False, "middle")
-    page.text(x + 15, top + 6, "POS accuracy (%)", 18, MUTED, True)
+        dx, dy, align = offsets[key]
+        label_width = 210 if align == "right" else 250
+        page.text_box(px + dx - (label_width if align == "right" else 0), py + dy, label_width, 27, labels[key], 17, INK, True, align)
+    page.text_box(left, top + height - 29, right - left, 27, "Linear CKA to pre-lesion core", 19, MUTED, False, "center")
+    page.text_box(x + 3, top, 190, 26, "POS accuracy (%)", 17, MUTED, True)
 
 
 def bounds(tokens: list[dict[str, str]]) -> tuple[float, float, float, float]:
-    """Return shared 1st-99th percentile PCA limits for the balanced token sample."""
-    xs = sorted(float(row["pc1"]) for row in tokens)
-    ys = sorted(float(row["pc2"]) for row in tokens)
-    lo, hi = int(len(tokens) * .01), int(len(tokens) * .99)
-    return xs[lo], xs[hi], ys[lo], ys[hi]
+    """Return padded full-range PCA limits shared by both readout panels."""
+    xs = [float(row["pc1"]) for row in tokens]
+    ys = [float(row["pc2"]) for row in tokens]
+    xmin, xmax, ymin, ymax = min(xs), max(xs), min(ys), max(ys)
+    xpad = (xmax - xmin) * .04
+    ypad = (ymax - ymin) * .04
+    return xmin - xpad, xmax + xpad, ymin - ypad, ymax + ypad
 
 
 def draw_readout(page: Page, tokens: list[dict[str, str]], x: float, top: float, width: float, height: float) -> None:
     """Draw identical shared-PCA coordinates with original versus retrained predictions."""
     xmin, xmax, ymin, ymax = bounds(tokens)
-    gap, panel_w = 100, (width - 100) / 2
-    panels = [(x, "original_correct", "Original core readout", "49 / 816 subset correct", "16.82% full dev"), (x + panel_w + gap, "remapped_correct", "Retrained readout", "521 / 816 subset correct", "80.00% full dev")]
+    gap, panel_w = 120, (width - 120) / 2
+    panels = [
+        (x, "original_correct", "Damaged encoder + original readout", "49 / 816 subset correct", "16.82% full development"),
+        (x + panel_w + gap, "remapped_correct", "Same encoder + retrained readout", "521 / 816 subset correct", "80.00% full development"),
+    ]
     for x0, field, title, subset, full in panels:
-        page.rect(x0, top, panel_w, height, LIGHT, RULE, 8, 1.5)
-        page.text(x0 + 24, top + 20, title, 25, INK, True)
-        page.text(x0 + panel_w - 24, top + 20, subset, 21, READOUT if field.startswith("remapped") else DAMAGE, True, "end")
-        page.text(x0 + panel_w - 24, top + 52, full, 18, MUTED, False, "end")
-        plot_left, plot_top, plot_w, plot_h = x0 + 50, top + 92, panel_w - 82, height - 145
+        page.rect(x0, top, panel_w, height, WHITE, RULE, 5, 1.5)
+        page.text_box(x0 + 22, top + 15, panel_w - 44, 30, title, 22, INK, True)
+        page.text_box(x0 + 22, top + 49, panel_w - 44, 25, subset, 18, READOUT if field == "remapped_correct" else DAMAGE, True, "right")
+        page.text_box(x0 + 22, top + 76, panel_w - 44, 23, full, 16, MUTED, False, "right")
+        plot_left, plot_top, plot_w, plot_h = x0 + 46, top + 104, panel_w - 76, height - 157
         page.line(plot_left, plot_top + plot_h, plot_left + plot_w, plot_top + plot_h, RULE, 1)
         page.line(plot_left, plot_top, plot_left, plot_top + plot_h, RULE, 1)
         for row in tokens:
@@ -247,92 +369,101 @@ def draw_readout(page: Page, tokens: list[dict[str, str]], x: float, top: float,
             else:
                 page.line(px - 2.5, py - 2.5, px + 2.5, py + 2.5, DAMAGE, 1)
                 page.line(px + 2.5, py - 2.5, px - 2.5, py + 2.5, DAMAGE, 1)
-        page.text(x0 + panel_w / 2, top + height - 31, "PC1 (14.50%)", 18, MUTED, False, "middle")
-        page.text(x0 + 12, top + 92, "PC2 (8.82%)", 17, MUTED)
+        page.text_box(plot_left, top + height - 34, plot_w, 24, "PC1 (14.50% of core variance)", 16, MUTED, False, "center")
+        page.text_box(x0 + 8, plot_top - 3, 180, 22, "PC2 (8.82%)", 15, MUTED)
     mid = x + width / 2
-    page.line(mid - 35, top + height / 2, mid + 35, top + height / 2, READOUT, 5)
-    page.polygon([(mid + 35, top + height / 2), (mid + 16, top + height / 2 - 11), (mid + 16, top + height / 2 + 11)], READOUT)
-    page.text(mid, top + height / 2 - 42, "same points", 18, READOUT, True, "middle")
+    page.arrow(mid - 42, top + height / 2, mid + 42, top + height / 2, READOUT, 4, 13)
 
 
 def draw_controls(page: Page, x: float, top: float, width: float) -> None:
     """Draw matched-random lesion summaries with intervention-specific axes."""
+    diamond(page, x + 12, top + 12, 8, LESION)
+    page.text_box(x + 28, top, 185, 24, "targeted lesion", 15, MUTED)
+    page.line(x + 230, top + 12, x + 300, top + 12, GATE, 8)
+    page.text_box(x + 312, top, 180, 24, "random range", 15, MUTED)
+    page.circle(x + 515, top + 12, 7, WHITE, GATE, 3)
+    page.text_box(x + 530, top, 180, 24, "random mean", 15, MUTED)
     rows = [
         ("QKV-only lesion", "74 input groups; n=100", 80, 92, 84.84, 86.03, 89.78, 88.02, "0/100 random as damaging"),
         ("Full QKV+dense lesion", "+18 dense tensors; n=100", 0, 40, 16.83, 8.71, 36.33, 16.33, "63/100 random as damaging"),
     ]
     for i, (label, detail, lo_axis, hi_axis, target, lo, hi, avg, result) in enumerate(rows):
-        row_top = top + i * 94
-        page.text(x, row_top, label, 22, INK, True)
-        page.text(x, row_top + 31, detail, 18, MUTED)
-        sx = lambda value: x + 390 + (value - lo_axis) / (hi_axis - lo_axis) * (width - 620)
-        page.line(x + 390, row_top + 34, x + width - 230, row_top + 34, RULE, 3)
-        page.line(sx(lo), row_top + 34, sx(hi), row_top + 34, GATE, 12)
-        page.circle(sx(avg), row_top + 34, 8, WHITE, GATE, 4)
-        symbol(page, sx(target), row_top + 34, "readout", LESION, 11)
-        page.text(x + width, row_top + 4, result, 19, BLUE, True, "end")
-        page.text(x + 390, row_top + 56, f"{lo_axis}%", 16, MUTED)
-        page.text(x + width - 230, row_top + 56, f"{hi_axis}%", 16, MUTED, False, "end")
+        row_top = top + 52 + i * 86
+        page.text_box(x, row_top, 245, 25, label, 18, INK, True)
+        page.text_box(x, row_top + 27, 245, 22, detail, 15, MUTED)
+        axis_x, axis_w = x + 310, width - 560
+        sx = lambda value: axis_x + (value - lo_axis) / (hi_axis - lo_axis) * axis_w
+        page.line(axis_x, row_top + 26, axis_x + axis_w, row_top + 26, RULE, 2)
+        page.line(sx(lo), row_top + 26, sx(hi), row_top + 26, GATE, 10)
+        page.circle(sx(avg), row_top + 26, 7, WHITE, GATE, 3)
+        diamond(page, sx(target), row_top + 26, 9, LESION)
+        page.text_box(axis_x, row_top + 52, axis_w, 22, f"axis: {lo_axis}% to {hi_axis}% POS accuracy", 14, MUTED, False, "center")
+        page.text_box(x + width - 250, row_top + 8, 250, 25, result, 15, BLUE, True, "right")
 
 
 def poster(site: dict, tokens: list[dict[str, str]]) -> Drawing:
-    """Compose the complete A0 portrait poster as vector primitives."""
+    """Compose the A0 portrait poster as measured vector primitives."""
     drawing = Drawing(W, H)
-    drawing.initialFontName = "PosterSans"
+    drawing.initialFontName = REGULAR
     page = Page(drawing, H)
     page.rect(0, 0, W, H, WHITE)
-    page.text(W / 2, 52, "Multiple Recovery Paths in a Lesioned Transformer", 82, INK, True, "middle")
-    page.text(W / 2, 145, "Internal Rerouting and Readout Remapping", 64, BLUE, True, "middle")
-    page.text(W / 2, 238, "Lorenzo Cannata  |  Uri Hasson", 34, INK, True, "middle")
-    page.text(W / 2, 298, "BlackboxNLP 2026  |  Main Track  |  Poster #192", 23, BLUE, True, "middle")
-    page.line(80, 360, 2304, 360, BLUE, 4)
+    page.text_box(80, 38, 2224, 90, "Multiple Recovery Paths in a Lesioned Transformer", 73, INK, True, "center")
+    page.text_box(80, 132, 2224, 68, "Internal Rerouting and Readout Remapping", 51, BLUE, True, "center")
+    page.text_box(80, 219, 2224, 40, "Lorenzo Cannata   |   Uri Hasson", 29, INK, True, "center")
+    page.text_box(80, 269, 2224, 32, "BlackboxNLP 2026   |   Main Track   |   Poster #192", 20, BLUE, True, "center")
+    page.line(80, 322, 2304, 322, BLUE, 3)
 
-    y = section(page, 80, 405, 2224, "Motivation")
-    motivation = ("A pretrained BERT encoder and a learned linear readout classify each word into one of 17 part-of-speech categories. "
-                  "A large immediate accuracy drop after removing a learned sparse, task-sufficient configuration establishes necessity only for that fixed routing and readout. "
-                  "Allowing the residual model to adapt asks a second question: can performance return through another route, and must that recovery restore the original hidden-state representation?")
-    wrap(page, motivation, 80, y, 1500, 28, 38)
-    page.rect(1640, y - 14, 664, 178, PALE_BLUE)
-    page.text(1680, y + 10, "CENTRAL FINDING", 21, BLUE, True)
-    wrap(page, "High POS accuracy can return without restoring the pre-lesion encoder geometry.", 1680, y + 50, 570, 31, 40, INK, True)
+    section_heading(page, 80, 350, 2224, "Motivation")
+    motivation = (
+        "Using BERT as a frozen encoder and a linear part-of-speech (POS) readout as a task classifier, we first use gate masking to learn a sparse core subnetwork sufficient for POS classification. "
+        "We then ablate this subnetwork to produce a large drop in performance. "
+        "Our main question is whether recovery can be achieved by reselecting surviving projection-specific gates, remapping a learned readout, or both."
+    )
+    page.text_box(80, 419, 1450, 158, motivation, 24, INK, False, "left", 33, True)
+    page.rect(1585, 415, 719, 166, PALE_BLUE)
+    page.text_box(1616, 433, 657, 26, "CENTRAL FINDING", 17, BLUE, True)
+    page.text_box(1616, 472, 657, 92, "Recovery of performance does not require recovery of the original representation.", 27, INK, True, "left", 35, True)
 
-    draw_framework(page, 680)
+    draw_framework(page, 620)
 
     left_x, right_x, col_w = 80, 1230, 1074
-    y_left = section(page, left_x, 1510, col_w, "Recovery results", "Five-seed recovery preserves the same ordering")
-    draw_performance(page, site, left_x, y_left, col_w, 430)
-    wrap(page, "Bars are means across five independent full-pipeline seeds; circles are individual runs and short lines show the observed range, not confidence intervals. The displayed gate-only result is the density-promoting variant. Mask-only recovery is visibly more seed-sensitive than readout, joint, or encoder recovery.", left_x, y_left + 450, col_w, 23, 31, MUTED)
+    section_heading(page, left_x, 1515, col_w, "Recovery performance", "Mean across five seeds")
+    draw_performance(page, site, left_x, 1586, col_w, 440)
+    page.text_box(left_x, 2040, col_w, 116, "All recovery conditions produced marked improvement over the damaged baseline. Bars show arithmetic means across five full-pipeline runs. Open circles are individual runs; lines show observed ranges, not confidence intervals. The gate-only result is the density-promoting variant.", 18, MUTED, False, "left", 25, True)
 
-    y_right = section(page, right_x, 1510, col_w, "Representational analysis", "Performance and return to the core representation diverge")
-    draw_cka(page, site, right_x, y_right, col_w, 430)
-    wrap(page, "Linear centered kernel alignment (CKA) measures hidden-state similarity, not recovered circuitry. Primary-seed endpoints are shown because matching representations are available for that run. Readout-only stays at the damaged model's CKA by construction while accuracy rises from 16.82% to 80.00%.", right_x, y_right + 450, col_w, 23, 31, MUTED)
+    section_heading(page, right_x, 1515, col_w, "Accuracy versus representation", "Primary run")
+    draw_cka(page, site, right_x, 1586, col_w, 440)
+    page.text_box(right_x, 2040, col_w, 116, "Representational analysis showed that behavioral recovery was not necessarily accompanied by restoration of the original hidden-state geometry. CKA measures hidden-state similarity, not recovered circuitry. Readout-only leaves encoder states unchanged yet raises primary-run accuracy from 16.82% to 80.00%.", 18, MUTED, False, "left", 25, True)
 
-    readout_y = section(page, 80, 2280, 2224, "Representational analysis", "A new readout extracts useful POS information from the same damaged representation")
-    draw_readout(page, tokens, 80, readout_y, 2224, 400)
-    page.circle(112, readout_y + 433, 7, BLUE)
-    page.text(132, readout_y + 420, "correct prediction", 19, MUTED)
-    symbol(page, 360, readout_y + 433, "lesion", DAMAGE, 7)
-    page.text(380, readout_y + 420, "incorrect prediction", 19, MUTED)
-    wrap(page, "Both panels contain the same POS-balanced sample of 816 token identities in one PCA basis fitted on the pre-lesion core. Coordinates remain identical; only the 17-way linear readout changes. Subset counts illustrate prediction changes; 16.82% and 80.00% are full-development accuracies over 25,147 tokens. PC1-PC2 show 23.32% of variance, not the full 768-dimensional classifier space.", 730, readout_y + 412, 1574, 20, 27, MUTED)
+    section_heading(page, 80, 2200, 2224, "Readout remapping recovers performance without changing encoder geometry")
+    page.text_box(80, 2262, 2224, 31, "SAME TOKEN REPRESENTATIONS; ONLY THE LINEAR READOUT CHANGES", 20, READOUT, True, "center")
+    draw_readout(page, tokens, 80, 2305, 2224, 445)
+    page.circle(100, 2782, 6, BLUE)
+    page.text_box(115, 2770, 240, 24, "correct under shown readout", 16, MUTED)
+    cross(page, 390, 2782, 5, DAMAGE, 2)
+    page.text_box(405, 2770, 250, 24, "incorrect under shown readout", 16, MUTED)
+    page.text_box(710, 2766, 1594, 73, "The damaged configuration contained task-relevant information that was poorly aligned with the original readout. Both panels show the same 816 POS-balanced token coordinates in one core-fitted PCA basis and shared scale; markers report correctness under each 768-dimensional readout. PC1-PC2 explain 23.32% of core variance and are not the classifier decision space.", 17, MUTED, False, "left", 24, True)
 
-    controls_y = section(page, 80, 2945, 1450, "Robustness and controls", "Random lesions qualify what the structural intervention establishes")
-    draw_controls(page, 80, controls_y, 1450)
-    wrap(page, "QKV-only controls support enrichment relative to global random groups. Full QKV+dense controls do not establish unique specificity of the exact dense target set; they validate recovery from a severe structured lesion.", 80, controls_y + 202, 1450, 17, 23, MUTED)
+    section_heading(page, 80, 2895, 1450, "Robustness and controls")
+    draw_controls(page, 80, 2965, 1450)
+    page.text_box(80, 3177, 1450, 64, "The QKV-only control supports enrichment relative to globally random QKV groups. The full random QKV+dense control does not establish unique specificity of the exact dense target set; it qualifies the causal interpretation of the severe lesion.", 16, MUTED, False, "left", 22, True)
 
-    conclusions_y = section(page, 1580, 2945, 724, "Conclusions")
-    wrap(page, "A sparse route can be necessary in the original fixed model yet cease to be necessary once surviving parameters adapt. Readout remapping, internal rerouting, and encoder-weight retraining recover different amounts of behavior and geometry.", 1580, conclusions_y, 724, 22, 29, INK, True)
-    wrap(page, "Scope: one BERT backbone, one supervised POS task, and a learned task readout. Recovery depends on which components may adapt; these experiments do not establish biological recovery mechanisms.", 1580, conclusions_y + 126, 724, 18, 25, MUTED)
+    section_heading(page, 1580, 2895, 724, "Conclusions")
+    page.text_box(1580, 2965, 724, 76, "Performance can recover without relearning the underlying transformations.", 22, INK, True, "left", 30, True)
+    page.text_box(1580, 3050, 724, 68, "The extent to which the original geometry is recovered depends on the degrees of freedom of the recovery protocol.", 18, INK, False, "left", 25, True)
+    page.text_box(1580, 3125, 724, 92, "Circuit necessity is conditional on the permitted rerouting strategy. A component may be necessary under the original fixed routing and readout, but cease to be so when the readout can be retrained or surviving transformations can be reselected.", 16, INK, False, "left", 22, True)
+    page.text_box(1580, 3222, 724, 48, "Our evaluations were based on a single task and a single backbone model. The biological relevance of these findings remains unclear.", 14, MUTED, False, "left", 19, True)
 
-    page.line(80, 3295, 2304, 3295, RULE, 2)
-    page.text(80, 3310, "Methods: Louizos et al. (2018); Cao et al. (2021). Data: Universal Dependencies English-EWT.", 18, MUTED)
-    page.text(2304, 3310, "BlackboxNLP 2026  |  Poster #192", 18, MUTED, False, "end")
+    page.line(80, 3290, 2304, 3290, RULE, 2)
+    page.text_box(80, 3303, 1500, 28, "Methods: Louizos et al. (2018); Cao et al. (2021). Data: Universal Dependencies English-EWT.", 15, MUTED)
+    page.text_box(1600, 3303, 704, 28, "BlackboxNLP 2026   |   Poster #192", 15, MUTED, False, "right")
     return drawing
 
 
 def reusable_figure(width: int, height: int, draw) -> Drawing:
     """Create a white standalone vector canvas for one poster figure."""
     drawing = Drawing(width, height)
-    drawing.initialFontName = "PosterSans"
+    drawing.initialFontName = REGULAR
     page = Page(drawing, height)
     page.rect(0, 0, width, height, WHITE)
     draw(page)
@@ -340,8 +471,14 @@ def reusable_figure(width: int, height: int, draw) -> Drawing:
 
 
 def write_pdf(drawing: Drawing, path: Path) -> None:
-    """Write a one-page vector PDF with embedded TrueType fonts and metadata."""
-    pdf = canvas.Canvas(str(path), pagesize=(drawing.width, drawing.height), pageCompression=1, initialFontName="PosterSans")
+    """Write one vector PDF page with embedded Bitstream Vera fonts."""
+    pdf = canvas.Canvas(
+        str(path),
+        pagesize=(drawing.width, drawing.height),
+        pageCompression=1,
+        initialFontName=REGULAR,
+        invariant=1,
+    )
     pdf.setTitle("Multiple Recovery Paths in a Lesioned Transformer")
     pdf.setAuthor("Lorenzo Cannata and Uri Hasson")
     pdf.setSubject("BlackboxNLP 2026 conference poster")
@@ -350,27 +487,81 @@ def write_pdf(drawing: Drawing, path: Path) -> None:
     pdf.save()
 
 
+def write_editable_svg(drawing: Drawing, path: Path, title: str, description: str) -> None:
+    """Write live-text SVG with embedded redistributable fonts and weights."""
+    renderSVG.drawToFile(drawing, str(path))
+    regular_data = base64.b64encode(FONT_PATH.read_bytes()).decode("ascii")
+    bold_data = base64.b64encode(BOLD_PATH.read_bytes()).decode("ascii")
+    font_style = (
+        "<style type=\"text/css\"><![CDATA["
+        "@font-face{font-family:'Bitstream Vera Sans';font-style:normal;font-weight:400;src:url(data:font/ttf;base64,"
+        + regular_data
+        + ") format('truetype');}"
+        "@font-face{font-family:'Bitstream Vera Sans';font-style:normal;font-weight:700;src:url(data:font/ttf;base64,"
+        + bold_data
+        + ") format('truetype');}"
+        "]]></style>"
+    )
+    svg = path.read_text()
+    svg = svg.replace(f"font-family: {BOLD};", "font-family: 'Bitstream Vera Sans'; font-weight: 700;")
+    svg = svg.replace(f"font-family: {REGULAR};", "font-family: 'Bitstream Vera Sans'; font-weight: 400;")
+    svg = svg.replace('<svg width="2384" height="3370"', '<svg width="841mm" height="1189mm"')
+    svg = svg.replace("<title>...</title>", f"<title>{title}</title>")
+    svg = svg.replace("<desc>...</desc>", f"<desc>{description}</desc>{font_style}")
+    path.write_text(svg)
+
+
+def find_binary(name: str) -> str:
+    """Find Poppler in PATH or the bundled Codex runtime."""
+    located = shutil.which(name)
+    if located:
+        return located
+    bundled = Path.home() / ".cache/codex-runtimes/codex-primary-runtime/dependencies/native/poppler/poppler/bin" / name
+    if bundled.exists():
+        return str(bundled)
+    raise RuntimeError(f"{name} is required; install Poppler and rerun the generator")
+
+
+def write_outlined_svg(pdf_path: Path, svg_path: Path) -> None:
+    """Convert the embedded-font PDF to portable SVG glyph outlines."""
+    subprocess.run([find_binary("pdftocairo"), "-svg", str(pdf_path), str(svg_path)], check=True)
+    svg = svg_path.read_text().replace('width="2384pt" height="3370pt"', 'width="841mm" height="1189mm"')
+    svg_start = svg.find("<svg")
+    first_close = svg.find(">", svg_start) + 1
+    metadata = "\n<title>Multiple Recovery Paths in a Lesioned Transformer</title>\n<desc>A0 portrait poster with all text converted to vector outlines.</desc>"
+    svg_path.write_text(svg[:first_close] + metadata + svg[first_close:])
+    if "<text" in svg_path.read_text():
+        raise RuntimeError("Outlined SVG unexpectedly contains live text")
+
+
+def write_png(pdf_path: Path, png_path: Path) -> None:
+    """Render the print PDF to a 150 dpi PNG preview."""
+    subprocess.run([find_binary("pdftoppm"), "-f", "1", "-singlefile", "-r", "150", "-png", str(pdf_path), str(png_path.with_suffix(""))], check=True)
+
+
 def main() -> None:
-    """Generate the editable poster, print PDF, and three reusable vector figures."""
+    """Generate editable, outlined, print, preview, and reusable vector artifacts."""
     FIGURES.mkdir(parents=True, exist_ok=True)
     site, tokens = load_data()
-    main_drawing = poster(site, tokens)
-    poster_svg = FIGURES / "recovery-paths-poster.svg"
-    renderSVG.drawToFile(main_drawing, str(poster_svg))
-    svg_text = poster_svg.read_text()
-    svg_text = svg_text.replace('<svg width="2384" height="3370"', '<svg width="841mm" height="1189mm"')
-    svg_text = svg_text.replace("<title>...</title>", "<title>Multiple Recovery Paths in a Lesioned Transformer</title>")
-    svg_text = svg_text.replace("<desc>...</desc>", "<desc>A0 portrait BlackboxNLP 2026 scientific conference poster.</desc>")
-    poster_svg.write_text(svg_text)
-    write_pdf(main_drawing, FIGURES / "recovery-paths-poster.pdf")
+    drawing = poster(site, tokens)
+    editable_svg = FIGURES / "recovery-paths-poster.svg"
+    pdf_path = FIGURES / "recovery-paths-poster.pdf"
+    outlined_svg = FIGURES / "recovery-paths-poster-outlined.svg"
+    png_path = FIGURES / "recovery-paths-poster.png"
 
-    perf = reusable_figure(1074, 430, lambda p: draw_performance(p, site, 0, 0, 1074, 430))
-    cka = reusable_figure(1074, 430, lambda p: draw_cka(p, site, 0, 0, 1074, 430))
-    readout = reusable_figure(2224, 470, lambda p: draw_readout(p, tokens, 0, 0, 2224, 470))
-    renderSVG.drawToFile(perf, str(FIGURES / "poster-recovery-performance.svg"))
-    renderSVG.drawToFile(cka, str(FIGURES / "poster-accuracy-cka.svg"))
-    renderSVG.drawToFile(readout, str(FIGURES / "poster-readout-remapping.svg"))
-    print("Generated A0 portrait poster SVG/PDF and three reusable vector figures")
+    write_editable_svg(drawing, editable_svg, "Multiple Recovery Paths in a Lesioned Transformer", "Editable A0 portrait BlackboxNLP 2026 poster with embedded live-text fonts.")
+    write_pdf(drawing, pdf_path)
+    write_outlined_svg(pdf_path, outlined_svg)
+    write_png(pdf_path, png_path)
+
+    figures = {
+        "poster-recovery-performance.svg": reusable_figure(1074, 440, lambda page: draw_performance(page, site, 0, 0, 1074, 440)),
+        "poster-accuracy-cka.svg": reusable_figure(1074, 440, lambda page: draw_cka(page, site, 0, 0, 1074, 440)),
+        "poster-readout-remapping.svg": reusable_figure(2224, 445, lambda page: draw_readout(page, tokens, 0, 0, 2224, 445)),
+    }
+    for filename, figure in figures.items():
+        write_editable_svg(figure, FIGURES / filename, filename.removesuffix(".svg"), "Reusable vector figure from the BlackboxNLP 2026 poster.")
+    print("Generated A0 PDF, live-text SVG, outlined SVG, PNG preview, and reusable SVG figures")
 
 
 if __name__ == "__main__":

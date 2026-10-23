@@ -20,6 +20,7 @@ Official source: <https://blackboxnlp.github.io/2026/accepted_papers/>
 - PDF creation date: 2026-07-18
 - Status: anonymous submitted draft; it is not copied into the public site.
 - Relevant locations: abstract and Figure 1 (pp. 1–2), methods and condition table (pp. 3–4), endpoints and geometry (pp. 5–8), lesion appendix and Table A1 (pp. 10–11).
+- Poster prose quotes or closely adapts sentences from the abstract, Results 4.1–4.2, Discussion, Conclusions, and Limitations. New five-seed and expanded-control labels remain tied to the experiment records below rather than being backported into the manuscript wording.
 
 ## Primary experiment
 
@@ -117,7 +118,7 @@ The Q/K/V-only control is not used as a control for the severe Q/K/V+dense lesio
 | `assets/plots/layer-gate-usage.{png,pdf}` | Layer lesion effect and mean Q/K/V active fraction | `figures_updated/evidence/figure4_layer_importance_head_usage_long.csv` |
 | `assets/plots/per-tag-recovery.{png,pdf}` | Per-tag accuracy as percent of each tag's core accuracy | `figures_updated/evidence/per_tag_accuracy_long.csv` |
 | `assets/plots/random-lesion-controls.png` | Q/K/V-only and full-lesion random controls | reviewer control bundles summarized above |
-| `assets/figures/recovery-paths-poster.{svg,pdf,png}` | A0 poster: five-seed accuracy summary, primary-seed CKA, fixed-representation readout comparison, and matched random-lesion controls | `assets/data/site-data.json`; `assets/data/readout-empirical.csv`; reviewer control report |
+| `assets/figures/recovery-paths-poster.{svg,pdf,png}` and `recovery-paths-poster-outlined.svg` | A0 poster: five-seed accuracy summary, primary-seed CKA, fixed-representation readout comparison, and matched random-lesion controls | `assets/data/site-data.json`; `assets/data/readout-empirical.csv`; reviewer control report |
 | `assets/figures/poster-recovery-performance.svg` | Five-seed endpoint means, individual runs, and observed ranges | `assets/data/site-data.json` |
 | `assets/figures/poster-accuracy-cka.svg` | Primary-seed accuracy versus linear CKA to the pre-lesion core | `assets/data/site-data.json` |
 | `assets/figures/poster-readout-remapping.svg` | Same 816 token coordinates with original versus retrained readout correctness | `assets/data/readout-empirical.csv` |
@@ -128,15 +129,17 @@ The plot evidence manifest is `figures_updated/evidence/manifest.json`. It recor
 
 - Recovery accuracy uses arithmetic means over full-pipeline seeds 42-46; circles are individual seeds and whiskers are observed ranges, not confidence intervals.
 - Accuracy-versus-CKA uses the primary seed because the corresponding matched hidden states are available for that run.
-- Readout remapping uses the fixed 816-token POS-balanced subset in a single core-fitted PCA basis; subset correctness is labelled separately from full-development accuracy.
+- Readout remapping uses the fixed 816-token POS-balanced subset in a single core-fitted PCA basis; both panels use the padded full observed coordinate range, with no percentile clipping. Subset correctness is labelled separately from full-development accuracy.
 - Random controls show the global QKV-only intervention and the fully randomized QKV+dense intervention as distinct experiments.
 - The poster contains no QR code because no canonical public project URL is verified.
+- Editable SVG text uses embedded Bitstream Vera Sans regular and bold fonts. The PDF embeds font subsets, while the outlined SVG converts every glyph to vector paths for font-independent viewing.
 
 Final A0 artifact checksums (2026-10-23):
 
-- PDF: `1db1f8e8f572696389afbd08375402e5c53d552928c045a220309755400f1d0a`
-- SVG: `9aca27e52924a3ee7aec0c1927fefcbe4d0ed2d1de4c246384d90e645030f01d`
-- PNG: `a831e2ab1c855307fc1efa80b793643f95f45918263cc4176dc6bb8944257425`
+- PDF: `2a6aa0539519c3e8f1088c667353b34ceedc3655a03ce777ddfb7cbbd8367767`
+- Editable SVG: `d40de792d2913a60feaa357831739bcab2679c15fa2d01d0742caba1732d200b`
+- Outlined SVG: `ca558f99883b6ea9b1613dff4f79636b04c0d4e2aab5bdfa5c253181df6fffcc`
+- PNG: `9f937c08554c231f10423ed2fbc32faab5eb27702d0b28f5d614089ad26368af`
 
 ## Resolved manuscript discrepancies
 
