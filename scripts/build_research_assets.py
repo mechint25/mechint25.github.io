@@ -24,6 +24,8 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "assets" / "data"
 FIGURES = ROOT / "assets" / "figures"
 UNITN_LOGO = ROOT / "assets" / "unitn-logo.png"
+QR_PNG = ROOT / "assets" / "qr" / "experiment-qr.png"
+PUBLIC_URL = "https://mechint25.github.io/"
 W, H = 2384, 3370  # A0 portrait: 841 x 1189 mm at 72 pt/in.
 WHITE, INK, MUTED, RULE = "#FFFFFF", "#142536", "#536575", "#C8D2DB"
 BLUE, PALE_BLUE = "#123F67", "#EAF2F8"
@@ -566,6 +568,15 @@ def recolor_reference_style(drawing: Drawing) -> None:
                     setattr(item, attribute, HexColor(target))
 
 
+def draw_poster_qr(page: Page, x: float, top: float, width: float) -> None:
+    """Place the verified public-project QR with a readable fallback URL."""
+    if not QR_PNG.is_file():
+        raise FileNotFoundError(f"Generate the verified QR asset first: {QR_PNG}")
+    page.text_box(x, top, width, 22, "EXPLORE THE EXPERIMENT", 13, BLUE, True, "center")
+    page.image(x + 15, top + 28, width - 30, width - 30, QR_PNG)
+    page.text_box(x, top + width + 4, width, 22, PUBLIC_URL.removeprefix("https://").rstrip("/"), 12, BLUE, True, "center")
+
+
 def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = False, gate_state_version: bool = False, editorial_style: bool = False) -> Drawing:
     """Compose the A0 portrait poster as measured vector primitives."""
     drawing = Drawing(W, H)
@@ -640,10 +651,13 @@ def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = Fals
 
     section_heading(page, 1580, 2895, 724, "Conclusions")
     page.text_box(1580, 2965, 724, 76, "Performance can recover without relearning the underlying transformations.", 22, INK, True, "left", 30, True)
-    page.text_box(1580, 3050, 724, 68, "The extent to which the original geometry is recovered depends on the degrees of freedom of the recovery protocol.", 18, INK, False, "left", 25, True)
-    page.text_box(1580, 3125, 724, 92, "Circuit necessity is conditional on the permitted rerouting strategy. A component may be necessary under the original fixed routing and readout, but cease to be so when the readout can be retrained or surviving transformations can be reselected.", 16, INK, False, "left", 22, True)
+    conclusion_width = 500 if gate_state_version else 724
+    page.text_box(1580, 3050, conclusion_width, 68, "The extent to which the original geometry is recovered depends on the degrees of freedom of the recovery protocol.", 18, INK, False, "left", 25, True)
+    page.text_box(1580, 3125, conclusion_width, 110, "Circuit necessity is conditional on the permitted rerouting strategy. A component may be necessary under the original fixed routing and readout, but cease to be so when the readout can be retrained or surviving transformations can be reselected.", 16, INK, False, "left", 22, True)
     limitations = "LIMITATIONS\nOur evaluations were based on a single task and a single backbone model." if gate_state_version else "Our evaluations were based on a single task and a single backbone model. The biological relevance of these findings remains unclear."
-    page.text_box(1580, 3222, 724, 48, limitations, 14, MUTED, gate_state_version, "left", 19, True)
+    page.text_box(1580, 3236 if gate_state_version else 3222, conclusion_width, 54 if gate_state_version else 48, limitations, 13 if gate_state_version else 14, MUTED, gate_state_version, "left", 18 if gate_state_version else 19, True)
+    if gate_state_version:
+        draw_poster_qr(page, 2100, 3055, 204)
 
     page.line(80, 3290, 2304, 3290, RULE, 2)
     page.text_box(80, 3303, 1500, 28, "Methods: Louizos et al. (2018); Cao et al. (2021). Data: Universal Dependencies English-EWT.", 15, MUTED)

@@ -12,6 +12,7 @@ import argparse
 import html
 from pathlib import Path
 from urllib.parse import urlparse
+from xml.etree import ElementTree
 
 
 def validate_url(url: str) -> str:
@@ -31,11 +32,12 @@ def main() -> None:
     args = parser.parse_args()
     url = validate_url(args.url)
     try:
-        import cv2
         import qrcode
+        import zxingcpp
+        from PIL import Image
         from qrcode.image.svg import SvgPathImage
     except ImportError as exc:
-        raise SystemExit("Install QR tooling first: python -m pip install 'qrcode[pil]' opencv-python") from exc
+        raise SystemExit("Install QR tooling first: python -m pip install 'qrcode[pil]' zxing-cpp") from exc
 
     args.output.mkdir(parents=True, exist_ok=True)
     qr = qrcode.QRCode(version=None, error_correction=qrcode.constants.ERROR_CORRECT_Q, box_size=24, border=4)
@@ -46,17 +48,22 @@ def main() -> None:
     qr.make_image(fill_color="black", back_color="white").save(png_path)
     qr.make_image(image_factory=SvgPathImage).save(svg_path)
 
-    decoded, _, _ = cv2.QRCodeDetector().detectAndDecode(cv2.imread(str(png_path)))
+    result = zxingcpp.read_barcode(Image.open(png_path))
+    decoded = result.text if result else ""
     if decoded != url:
         raise RuntimeError(f"QR decode verification failed: {decoded!r}")
 
-    qr_markup = svg_path.read_text(encoding="utf-8").split("?>", 1)[-1]
+    qr_root = ElementTree.parse(svg_path).getroot()
+    qr_path = qr_root.find("{http://www.w3.org/2000/svg}path")
+    if qr_path is None:
+        raise RuntimeError("Generated QR SVG has no vector path")
+    qr_scale = 560 / float(qr_root.attrib["viewBox"].split()[2])
     poster = f'''<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="740" viewBox="0 0 1400 740">
-  <rect width="1400" height="740" rx="32" fill="#f4f0e8"/>
-  <text x="650" y="238" font-family="Georgia,serif" font-size="72" fill="#17212b">Explore the experiment</text>
-  <text x="650" y="322" font-family="Arial,sans-serif" font-size="30" fill="#65717b">Multiple Recovery Paths in a Lesioned Transformer</text>
-  <text x="650" y="500" font-family="Arial,sans-serif" font-size="26" fill="#17212b">{html.escape(url)}</text>
-  <g transform="translate(70 70) scale(.52)">{qr_markup}</g>
+  <rect width="1400" height="740" rx="32" fill="#ffffff"/>
+  <g transform="translate(70 70) scale({qr_scale:.6f})"><path d="{html.escape(qr_path.attrib['d'], quote=True)}" fill="#000000"/></g>
+  <text x="690" y="245" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="72" fill="#142536">Explore the experiment</text>
+  <text x="690" y="335" font-family="Arial,Helvetica,sans-serif" font-size="30" fill="#536575">Multiple Recovery Paths in a Lesioned Transformer</text>
+  <text x="690" y="505" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="30" fill="#123f67">{html.escape(url)}</text>
 </svg>'''
     (args.output / "explore-the-experiment.svg").write_text(poster, encoding="utf-8")
     print(f"Verified payload: {decoded}")

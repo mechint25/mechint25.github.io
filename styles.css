@@ -226,6 +226,12 @@ h1 em { color: var(--fixed); font-weight: inherit; }
 .poster-details div { padding: 1rem 1rem 0 0; }
 .poster-details dt { color: #9eabb5; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .poster-details dd { margin: .35rem 0 0; font-family: var(--serif); }
+.poster-qr { display: grid; grid-template-columns: 108px 1fr; gap: 1rem; align-items: center; margin-top: 2rem; }
+.poster-qr > a { padding: 7px; background: white; }
+.poster-qr img { display: block; width: 100%; }
+.poster-qr strong, .poster-qr span { display: block; }
+.poster-qr div > a { display: inline-block; margin: .25rem 0 .55rem; color: white; }
+.poster-qr span, .poster-qr span a { color: #9eabb5; font-size: .78rem; }
 .poster-preview { max-width: 780px; margin: 0 auto; }
 .poster-preview a { display: block; padding: clamp(.5rem,1.5vw,1rem); background: white; box-shadow: 0 28px 80px rgba(0,0,0,.32); transition: transform .2s ease; }
 .poster-preview a:hover { transform: translateY(-4px); }

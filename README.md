@@ -38,15 +38,15 @@ Then open <http://127.0.0.1:4173/>. Fetching the CSV/JSON evidence requires HTTP
 
 `.github/workflows/pages.yml` publishes this repository when `main` is updated, or when manually dispatched. In the GitHub repository settings, choose **GitHub Actions** as the Pages source.
 
-The workflow does not establish the canonical URL until it successfully deploys in the destination repository. No commit, push, Pages settings change, or deployment was performed during local construction.
+The GitHub Pages root was deployed and returned HTTP 200 before its canonical URL was encoded into the QR assets.
 
 ## Final QR assets
 
 Do not generate QR assets until the successfully deployed HTTPS URL is canonical. The standard library does not implement QR error correction or decoding, so the offline helper uses dedicated open-source tooling:
 
 ```bash
-python -m pip install 'qrcode[pil]' opencv-python
-python scripts/generate_qr.py 'https://OWNER.github.io/REPOSITORY/' --output assets/qr
+python -m pip install 'qrcode[pil]' zxing-cpp
+python scripts/generate_qr.py 'https://mechint25.github.io/' --output assets/qr
 ```
 
 The script rejects placeholders and local URLs, creates SVG and high-resolution PNG output with a four-module quiet zone, creates a labelled poster SVG, and decodes the PNG to verify the exact payload.
@@ -62,4 +62,4 @@ The script rejects placeholders and local URLs, creates SVG and high-resolution 
 
 ## Current publication limits
 
-The supplied manuscript is anonymous and is not distributed by this site. The site links to the official acceptance/program page until a final public proceedings PDF is verifiable. Affiliations, DOI, public code URL, canonical site URL, and final QR assets remain intentionally pending.
+The supplied manuscript is anonymous and is not distributed by this site. The site links to the official acceptance/program page until a final public proceedings PDF is verifiable. Affiliations, DOI, and the final public code URL remain intentionally pending. The canonical project URL is `https://mechint25.github.io/`.
