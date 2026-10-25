@@ -7,7 +7,7 @@ This manifest records the provenance of public claims in the interactive project
 | Displayed claim | Authority | Status |
 |---|---|---|
 | Title and authors: Lorenzo Cannata and Uri Hasson | BlackboxNLP 2026 accepted-papers page | Verified 2026-10-23 |
-| Venue: BlackboxNLP 2026 Main Track, paper/poster #192 | BlackboxNLP 2026 program | Verified 2026-10-23 |
+| Venue: BlackboxNLP 2026, paper/poster #192 | BlackboxNLP 2026 program | Verified 2026-10-23; “Main Track” removed after author correction |
 | Workshop: October 29, 2026, co-located with EMNLP 2026 in Budapest | BlackboxNLP 2026 program | Verified 2026-10-23 |
 | Affiliations, DOI, proceedings PDF, public code URL | No authoritative public record located | Intentionally omitted |
 
@@ -41,6 +41,8 @@ SHA-256: `5cbc40c2ee6c8fa8b366f2959384fb02c4f76c021967d92e9a06ec9c3ea2e51c`
 
 Primary endpoint table: `/Users/lars/Desktop/wd/mechint/representations/final_results/tables/endpoint_summary.csv`  
 SHA-256: `01744f907a206dafd6d0def725e99908ae2ffbcd4927baf78f796d28d95b0d74`
+
+Poster/site gate composition uses the primary-run endpoint fractions exactly: active is `mask_prob_gt_0p99_frac`, inactive is `mask_prob_lt_0p01_frac`, and intermediate is the remainder. Inactive is not computed as `100 − active`, and effective inactivity is distinct from the permanently clamped lesion.
 
 Checkpoint metrics: `/Users/lars/Desktop/wd/mechint/representations/metrics.csv`  
 SHA-256: `6bc038cad1418b2d6d4567baf290062321ab0477d7ed9738cc7a8485ddb652d5`
@@ -119,17 +121,22 @@ The Q/K/V-only control is not used as a control for the severe Q/K/V+dense lesio
 | `assets/plots/per-tag-recovery.{png,pdf}` | Per-tag accuracy as percent of each tag's core accuracy | `figures_updated/evidence/per_tag_accuracy_long.csv` |
 | `assets/plots/random-lesion-controls.png` | Q/K/V-only and full-lesion random controls | reviewer control bundles summarized above |
 | `assets/figures/recovery-paths-poster.{svg,pdf,png}` and `recovery-paths-poster-outlined.svg` | A0 poster: five-seed accuracy summary, primary-seed CKA, fixed-representation readout comparison, and matched random-lesion controls | `assets/data/site-data.json`; `assets/data/readout-empirical.csv`; reviewer control report |
+| `assets/figures/recovery-paths-poster-geometry-draft.{svg,pdf,png}` | Alternate A0 draft: compact fixed-token readout comparison beside a primary-run plane of POS-centroid and readout-weight RDM similarities | `assets/data/site-data.json`; `assets/data/readout-empirical.csv`; primary-run endpoint records summarized above |
+| `assets/figures/recovery-paths-poster-gate-state.{svg,pdf,png}` and `recovery-paths-poster-gate-state-outlined.svg` | Latest A0 poster: five-run accuracy paired with primary-run active/inactive/intermediate gate fractions; prior poster variants retained | Same sources as above plus `endpoint_summary.csv`; UNITN logo supplied by the author |
+| `assets/figures/recovery-paths-poster-reference-style.{svg,pdf,png}` and `recovery-paths-poster-reference-style-outlined.svg` | Alternate styling of the same verified gate-state poster: flatter trainability tables, restrained academic palette, and reduced panel framing | Identical scientific inputs to the gate-state poster; no metric or geometry changes |
 | `assets/figures/poster-recovery-performance.svg` | Five-seed endpoint means, individual runs, and observed ranges | `assets/data/site-data.json` |
 | `assets/figures/poster-accuracy-cka.svg` | Primary-seed accuracy versus linear CKA to the pre-lesion core | `assets/data/site-data.json` |
 | `assets/figures/poster-readout-remapping.svg` | Same 816 token coordinates with original versus retrained readout correctness | `assets/data/readout-empirical.csv` |
+| `assets/figures/poster-recovery-geometry.svg` | Reusable primary-run endpoint figure comparing encoder POS-centroid geometry with readout-weight geometry | `assets/data/site-data.json` |
 
 The plot evidence manifest is `figures_updated/evidence/manifest.json`. It records transformations, original server paths, evaluation counts, thresholds, and the experiment commit. Missing values were not mocked by the figure generator.
 
 ### A0 poster aggregation contract
 
-- Recovery accuracy uses arithmetic means over full-pipeline seeds 42-46; circles are individual seeds and whiskers are observed ranges, not confidence intervals.
+- Recovery accuracy uses arithmetic means over full-pipeline seeds 42-46; filled squares are means, open circles are individual seeds, and capped spans are observed min-max ranges, not confidence intervals.
 - Accuracy-versus-CKA uses the primary seed because the corresponding matched hidden states are available for that run.
 - Readout remapping uses the fixed 816-token POS-balanced subset in a single core-fitted PCA basis; both panels use the padded full observed coordinate range, with no percentile clipping. Subset correctness is labelled separately from full-development accuracy.
+- The alternate geometry draft preserves those fixed token coordinates but makes the RDM result primary: x is POS-centroid RDM similarity to the core, y is readout-weight RDM similarity to the core, and labels report primary-run full-development accuracy. Its arrows compare measured endpoints and are not training trajectories.
 - Random controls show the global QKV-only intervention and the fully randomized QKV+dense intervention as distinct experiments.
 - The poster contains no QR code because no canonical public project URL is verified.
 - Editable SVG text uses embedded Bitstream Vera Sans regular and bold fonts. The PDF embeds font subsets, while the outlined SVG converts every glyph to vector paths for font-independent viewing.

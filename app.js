@@ -171,7 +171,7 @@ function renderRepresentation(key = "core") {
 
 function renderResults() {
   const order = ["core", "encoder_only", "readout_and_mask_reg", "readout_only", "mask_only_inverse_reg", "mask_only_no_reg", "mask_only_reg", "damage"];
-  $("#results-controls").innerHTML = order.map(key => `<button type="button" role="option" aria-selected="${key === app.condition}" data-result="${key}"><i aria-hidden="true"></i><span>${app.data.conditions[key].short}</span><small>${format(app.data.conditions[key].accuracy)}%</small></button>`).join("");
+  $("#results-controls").innerHTML = order.map(key => { const c = app.data.conditions[key]; return `<button type="button" role="option" aria-selected="${key === app.condition}" data-result="${key}"><i aria-hidden="true"></i><span>${c.short}</span><small>${format(c.accuracy)}% · A ${c.active_gates.toFixed(1)} / I ${c.inactive_gates.toFixed(1)}</small></button>`; }).join("");
   const chart = $("#accuracy-cka-chart");
   const x = value => 85 + (value - .38) / (.64) * 600;
   const y = value => 420 - (value - 10) / 90 * 350;
@@ -193,7 +193,8 @@ function selectResult(key) {
   $$('[data-result]').forEach(button => button.setAttribute("aria-selected", String(button.dataset.result === key)));
   $$('[data-point]').forEach(point => point.setAttribute("aria-selected", String(point.dataset.point === key)));
   const condition = app.data.conditions[key];
-  $("#selected-result").innerHTML = `<strong>${condition.label}: ${format(condition.accuracy)}% accuracy · ${format(condition.cka_core)} CKA to core · ${format(condition.cka_damage)} CKA to damage</strong><p>${condition.implication}</p>`;
+  const gateLabel = `Effective gate state, primary run: ${condition.active_gates.toFixed(2)}% active, ${condition.inactive_gates.toFixed(2)}% inactive, ${condition.intermediate_gates.toFixed(2)}% intermediate`;
+  $("#selected-result").innerHTML = `<strong>${condition.label}: ${format(condition.accuracy)}% accuracy · ${format(condition.cka_core)} CKA to core · ${format(condition.cka_damage)} CKA to damage</strong><div class="gate-meter" role="img" aria-label="${gateLabel}"><i class="gate-active" style="width:${condition.active_gates}%"></i><i class="gate-mid" style="width:${condition.intermediate_gates}%"></i><i class="gate-inactive" style="width:${condition.inactive_gates}%"></i></div><p class="gate-values">${gateLabel}</p><p>${condition.implication}</p><p class="metric-note">Active means p &gt; 0.99; inactive means p &lt; 0.01. Intermediate gates are neither. Effective inactivity is not the permanent lesion.</p>`;
 }
 
 function renderSeedChart(order) {

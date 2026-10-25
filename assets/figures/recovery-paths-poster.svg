@@ -20,8 +20,8 @@
 			<path d="M 80,2970 L 2304,2970 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2.5;"/>
 			<text x="80" y="2927" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 24px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,5854) scale(1,-1)">Using BERT as a frozen encoder and a linear part-of-speech (POS) readout as a task classifier, we first use gate masking</text>
 			<text x="80" y="2894" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 24px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,5788) scale(1,-1)">to learn a sparse core subnetwork sufficient for POS classification. We then ablate this subnetwork to produce a large</text>
-			<text x="80" y="2861" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 24px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,5722) scale(1,-1)">drop in performance. Our main question is whether recovery can be achieved by reselecting surviving</text>
-			<text x="80" y="2828" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 24px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,5656) scale(1,-1)">projection-specific gates, remapping a learned readout, or both.</text>
+			<text x="80" y="2861" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 24px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,5722) scale(1,-1)">drop in performance. Our main question is whether performance can recover by adapting the surviving</text>
+			<text x="80" y="2828" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 24px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,5656) scale(1,-1)">projection-specific gates, retraining the linear POS readout, or both.</text>
 			<rect x="1585" y="2789" width="719" height="166" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(91%,94%,97%); fill-rule: evenodd;"/>
 			<text x="1616" y="2920.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,24%,40%); stroke:none;" transform="translate(0,5840) scale(1,-1)">CENTRAL FINDING</text>
 			<text x="1616" y="2871" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 27px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,5742) scale(1,-1)">Recovery of performance does not require</text>
@@ -157,8 +157,8 @@
 			<path d="M 749,2262 L 787,2224 Z" style="stroke: rgb(12%,14%,16%); stroke-linecap: butt; stroke-width: 6;"/>
 			<path d="M 787,2262 L 749,2224 Z" style="stroke: rgb(12%,14%,16%); stroke-linecap: butt; stroke-width: 6;"/>
 			<text x="806" y="2253" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,4506) scale(1,-1)">Mask scores forced to -12;</text>
-			<text x="806" y="2227" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,4454) scale(1,-1)">effective gates are zero and</text>
-			<text x="806" y="2201" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,4402) scale(1,-1)">gradients are blocked.</text>
+			<text x="806" y="2228" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,4456) scale(1,-1)">effective gates are zero and</text>
+			<text x="806" y="2203" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,4406) scale(1,-1)">gradients are blocked.</text>
 			<text x="732" y="2155" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,4310) scale(1,-1)">74 Q/K/V 64-coordinate input groups</text>
 			<text x="732" y="2130" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,4260) scale(1,-1)">5 attention-output gate tensors</text>
 			<text x="732" y="2105" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,4210) scale(1,-1)">9 FFN-intermediate + 4 FFN-output tensors</text>
@@ -223,12 +223,14 @@
 			<text x="80" y="1819.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 36px;fill: rgb(7%,24%,40%); stroke:none;" transform="translate(0,3638) scale(1,-1)">Recovery performance</text>
 			<text x="878.62109375" y="1827.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 21px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3654) scale(1,-1)">Mean across five seeds</text>
 			<path d="M 80,1805 L 1154,1805 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2.5;"/>
-			<rect x="88" y="1767" width="18" height="13" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,24%,40%); fill-rule: evenodd;"/>
+			<rect x="90" y="1766" width="14" height="14" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,24%,40%); fill-rule: evenodd;"/>
 			<text x="114" y="1768.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 16px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3536) scale(1,-1)">mean</text>
 			<circle cx="278" cy="1773" r="6" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
 			<text x="292" y="1768.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 16px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3536) scale(1,-1)">individual run</text>
-			<path d="M 482,1773 L 550,1773 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 3;"/>
-			<text x="562" y="1768.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 16px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3536) scale(1,-1)">observed range</text>
+			<path d="M 482,1773 L 550,1773 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 5;"/>
+			<path d="M 482,1781 L 482,1765 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 550,1781 L 550,1765 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2;"/>
+			<text x="562" y="1768.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 16px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3536) scale(1,-1)">observed min-max</text>
 			<path d="M 340,1742 L 340,1399 Z" style="stroke: rgb(96%,97%,98%); stroke-linecap: butt; stroke-width: 1;"/>
 			<text x="334.592041015625" y="1374.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2748) scale(1,-1)">0</text>
 			<path d="M 482.8,1742 L 482.8,1399 Z" style="stroke: rgb(96%,97%,98%); stroke-linecap: butt; stroke-width: 1;"/>
@@ -242,64 +244,76 @@
 			<path d="M 1054,1742 L 1054,1399 Z" style="stroke: rgb(96%,97%,98%); stroke-linecap: butt; stroke-width: 1;"/>
 			<text x="1037.776123046875" y="1374.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2748) scale(1,-1)">100</text>
 			<text x="272.9443359375" y="1705.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3410) scale(1,-1)">Core</text>
-			<rect x="340" y="1701" width="678.5143670760001" height="18" rx="3" ry="3" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,24%,40%); fill-rule: evenodd;"/>
-			<path d="M 1018.054398,1694 L 1018.962978,1694 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 3;"/>
-			<circle cx="1018.1963628999999" cy="1698" r="5" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="1018.96297756" cy="1696" r="5" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="1018.6222639" cy="1694" r="5" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="1018.7358327400001" cy="1692" r="5" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="1018.05439828" cy="1690" r="5" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="1011.5143670760001" y="1714" width="14.0" height="14" rx="2" ry="2" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,24%,40%); fill-rule: evenodd;"/>
+			<path d="M 1018.054398,1700 L 1018.962978,1700 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 5;"/>
+			<path d="M 1018.054398,1708 L 1018.054398,1692 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 1018.962978,1708 L 1018.962978,1692 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2;"/>
+			<circle cx="1018.1963628999999" cy="1705" r="5" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="1018.96297756" cy="1702.5" r="5" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="1018.6222639" cy="1700" r="5" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="1018.7358327400001" cy="1697.5" r="5" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="1018.05439828" cy="1695" r="5" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
 			<text x="1079.029296875" y="1705.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,24%,40%); stroke:none;" transform="translate(0,3410) scale(1,-1)">95.03%</text>
 			<text x="197.61328125" y="1651.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3302) scale(1,-1)">Encoder only</text>
-			<rect x="340" y="1647" width="658.3723385400001" height="18" rx="3" ry="3" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(82%,47%,12%); fill-rule: evenodd;"/>
-			<path d="M 995.737464,1640 L 999.911244,1640 Z" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 3;"/>
-			<circle cx="999.1446295000001" cy="1644" r="5" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="999.20141392" cy="1642" r="5" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="999.9112441599999" cy="1640" r="5" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="995.73746434" cy="1638" r="5" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="997.86694078" cy="1636" r="5" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="991.3723385400001" y="1660" width="14.0" height="14" rx="2" ry="2" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 1; fill: rgb(82%,47%,12%); fill-rule: evenodd;"/>
+			<path d="M 995.737464,1646 L 999.911244,1646 Z" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 5;"/>
+			<path d="M 995.737464,1654 L 995.737464,1638 Z" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 999.911244,1654 L 999.911244,1638 Z" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2;"/>
+			<circle cx="999.1446295000001" cy="1651" r="5" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="999.20141392" cy="1648.5" r="5" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="999.9112441599999" cy="1646" r="5" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="995.73746434" cy="1643.5" r="5" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="997.86694078" cy="1641" r="5" style="stroke: rgb(82%,47%,12%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
 			<text x="1079.029296875" y="1651.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(82%,47%,12%); stroke:none;" transform="translate(0,3302) scale(1,-1)">92.21%</text>
 			<text x="165.57714843749997" y="1597.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3194) scale(1,-1)">Gates + readout</text>
-			<rect x="340" y="1593" width="613.000246068" height="18" rx="3" ry="3" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
-			<path d="M 951.586275,1586 L 953.99968,1586 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3;"/>
-			<circle cx="953.17628134" cy="1590" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="953.99968042" cy="1588" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="953.17628134" cy="1586" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="951.58627474" cy="1584" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="953.0627125" cy="1582" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="946.000246068" y="1606" width="14.0" height="14" rx="2" ry="2" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
+			<path d="M 951.586275,1592 L 953.99968,1592 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 5;"/>
+			<path d="M 951.586275,1600 L 951.586275,1584 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 953.99968,1600 L 953.99968,1584 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2;"/>
+			<circle cx="953.17628134" cy="1597" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="953.99968042" cy="1594.5" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="953.17628134" cy="1592" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="951.58627474" cy="1589.5" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="953.0627125" cy="1587" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
 			<text x="1079.029296875" y="1597.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,3194) scale(1,-1)">85.85%</text>
 			<text x="180.76464843749997" y="1543.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3086) scale(1,-1)">Readout only</text>
-			<rect x="340" y="1539" width="561.0580041359999" height="18" rx="3" ry="3" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
-			<path d="M 890.285683,1532 L 911.21136,1532 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3;"/>
-			<circle cx="911.21135974" cy="1536" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="894.1187423800001" cy="1534" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="910.3027804600001" cy="1532" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="899.37145474" cy="1530" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="890.28568336" cy="1528" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="894.0580041359999" y="1552" width="14.0" height="14" rx="2" ry="2" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
+			<path d="M 890.285683,1538 L 911.21136,1538 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 5;"/>
+			<path d="M 890.285683,1546 L 890.285683,1530 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 911.21136,1546 L 911.21136,1530 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2;"/>
+			<circle cx="911.21135974" cy="1543" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="894.1187423800001" cy="1540.5" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="910.3027804600001" cy="1538" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="899.37145474" cy="1535.5" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="890.28568336" cy="1533" r="5" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
 			<text x="1079.029296875" y="1543.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,3086) scale(1,-1)">78.58%</text>
 			<text x="152.91210937499997" y="1489.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,2978) scale(1,-1)">Gates only, dense</text>
-			<rect x="340" y="1485" width="494.5614819599999" height="18" rx="3" ry="3" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,54%,50%); fill-rule: evenodd;"/>
-			<path d="M 798.263807,1478 L 865.583725,1478 Z" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 3;"/>
-			<circle cx="837.95729452" cy="1482" r="5" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="798.26380684" cy="1480" r="5" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="865.58372524" cy="1478" r="5" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="832.4490415600001" cy="1476" r="5" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="838.55354164" cy="1474" r="5" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="827.5614819599999" y="1498" width="14.0" height="14" rx="2" ry="2" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,54%,50%); fill-rule: evenodd;"/>
+			<path d="M 798.263807,1484 L 865.583725,1484 Z" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 5;"/>
+			<path d="M 798.263807,1492 L 798.263807,1476 Z" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 865.583725,1492 L 865.583725,1476 Z" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2;"/>
+			<circle cx="837.95729452" cy="1489" r="5" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="798.26380684" cy="1486.5" r="5" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="865.58372524" cy="1484" r="5" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="832.4490415600001" cy="1481.5" r="5" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="838.55354164" cy="1479" r="5" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
 			<text x="1079.029296875" y="1489.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,54%,50%); stroke:none;" transform="translate(0,2978) scale(1,-1)">69.27%</text>
 			<text x="219.0322265625" y="1435.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,2870) scale(1,-1)">Damaged</text>
-			<rect x="340" y="1431" width="110.00602712400001" height="18" rx="3" ry="3" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(77%,29%,22%); fill-rule: evenodd;"/>
-			<path d="M 406.553304,1424 L 462.232073,1424 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 3;"/>
-			<circle cx="460.1593813" cy="1428" r="5" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="461.55063886" cy="1426" r="5" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="406.55330374" cy="1424" r="5" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="462.23207332" cy="1422" r="5" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
-			<circle cx="459.53473840000004" cy="1420" r="5" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="443.006027124" y="1444" width="14.0" height="14" rx="2" ry="2" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 1; fill: rgb(77%,29%,22%); fill-rule: evenodd;"/>
+			<path d="M 406.553304,1430 L 462.232073,1430 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 5;"/>
+			<path d="M 406.553304,1438 L 406.553304,1422 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2;"/>
+			<path d="M 462.232073,1438 L 462.232073,1422 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2;"/>
+			<circle cx="460.1593813" cy="1435" r="5" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="461.55063886" cy="1432.5" r="5" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="406.55330374" cy="1430" r="5" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="462.23207332" cy="1427.5" r="5" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<circle cx="459.53473840000004" cy="1425" r="5" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 2; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
 			<text x="1079.029296875" y="1435.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(77%,29%,22%); stroke:none;" transform="translate(0,2870) scale(1,-1)">15.41%</text>
 			<path d="M 340,1399 L 1054,1399 Z" style="stroke: rgb(7%,14%,21%); stroke-linecap: butt; stroke-width: 1.5;"/>
 			<text x="568.75927734375" y="1357.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 19px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2714) scale(1,-1)">Held-out POS accuracy (%)</text>
-			<text x="80" y="1312" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2624) scale(1,-1)">All recovery conditions produced marked improvement over the damaged baseline. Bars show arithmetic means</text>
-			<text x="80" y="1287" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2574) scale(1,-1)">across five full-pipeline runs. Open circles are individual runs; lines show observed ranges, not confidence intervals.</text>
-			<text x="80" y="1262" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2524) scale(1,-1)">The gate-only result is the density-promoting variant.</text>
+			<text x="80" y="1312" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2624) scale(1,-1)">All recovery conditions produced marked improvement over the damaged baseline. Filled squares show arithmetic</text>
+			<text x="80" y="1287" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2574) scale(1,-1)">means across five full-pipeline runs. Open circles are individual runs; capped spans show observed min-max ranges,</text>
+			<text x="80" y="1262" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2524) scale(1,-1)">not confidence intervals. The gate-only result is the density-promoting variant.</text>
 			<text x="1230" y="1819.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 36px;fill: rgb(7%,24%,40%); stroke:none;" transform="translate(0,3638) scale(1,-1)">Accuracy versus representation</text>
 			<text x="2163.38818359375" y="1827.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 21px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3654) scale(1,-1)">Primary run</text>
 			<path d="M 1230,1805 L 2304,1805 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2.5;"/>
@@ -327,20 +341,20 @@
 			<text x="1287.3681640625" y="1674.7777777777778" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3349) scale(1,-1)">80</text>
 			<path d="M 1322,1758 L 2269,1758 Z" style="stroke: rgb(96%,97%,98%); stroke-linecap: butt; stroke-width: 1;"/>
 			<text x="1276.55224609375" y="1753.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3506) scale(1,-1)">100</text>
-			<path d="M 1373.27394,1432.673778 L 1373.27394,1679.777778 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 4; stroke-dasharray: 8, 7;"/>
+			<path d="M 1373.27394,1432.709154 L 1373.27394,1679.784 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 4; stroke-dasharray: 8, 7;"/>
 			<text x="1389.2739403225805" y="1562.088888888889" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,3124) scale(1,-1)">identical encoder states</text>
 			<circle cx="1373.2739403225805" cy="1432.7091537777778" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(77%,29%,22%); fill-rule: evenodd;"/>
 			<text x="1387.2739403225805" y="1406.7091537777778" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,2813) scale(1,-1)">Damaged</text>
 			<circle cx="1373.2739403225805" cy="1679.7840003555557" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
-			<text x="1387.2739403225805" y="1691.7840003555557" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3383) scale(1,-1)">Readout only</text>
+			<text x="1389.2739403225805" y="1651.7840003555557" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3303) scale(1,-1)">Readout only</text>
 			<circle cx="1496.4603112903226" cy="1702.7713212444444" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
-			<text x="1510.4603112903226" y="1714.7713212444444" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3429) scale(1,-1)">Gates + readout</text>
+			<text x="1512.4603112903226" y="1727.7713212444444" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3455) scale(1,-1)">Gates + readout</text>
 			<circle cx="1634.586370967742" cy="1639.657279288889" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(7%,54%,50%); fill-rule: evenodd;"/>
 			<text x="1648.586370967742" y="1613.657279288889" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3227) scale(1,-1)">Gates only, dense</text>
 			<circle cx="1914.4645838709675" cy="1727.9516177777778" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(82%,47%,12%); fill-rule: evenodd;"/>
-			<text x="1570.3014979334675" y="1739.9516177777778" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3479) scale(1,-1)">Encoder only</text>
+			<text x="1852.3830409022175" y="1752.9516177777778" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3505) scale(1,-1)">Encoder only</text>
 			<circle cx="2238.451612903226" cy="1738.3876746666667" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(7%,24%,40%); fill-rule: evenodd;"/>
-			<text x="2044.3827652469759" y="1750.3876746666667" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3500) scale(1,-1)">Core</text>
+			<text x="2180.382765246976" y="1710.3876746666667" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3420) scale(1,-1)">Core</text>
 			<text x="1657.095947265625" y="1354.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 19px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2708) scale(1,-1)">Linear CKA to pre-lesion core</text>
 			<text x="1233" y="1767.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3534) scale(1,-1)">POS accuracy (%)</text>
 			<text x="1230" y="1312" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2624) scale(1,-1)">Representational analysis showed that behavioral recovery was not necessarily accompanied by restoration of the</text>

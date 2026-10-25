@@ -43,6 +43,8 @@
       "pos_centroid": 1.0,
       "head_rdm": 1.0,
       "active_gates": 50.581115,
+      "inactive_gates": 49.077693,
+      "intermediate_gates": 0.341192,
       "trainable": ["gates", "readout"],
       "summary": "Sparse task-sufficient configuration learned with fixed pretrained encoder weights.",
       "implication": "The learned gated configuration sustains near-95% POS accuracy."
@@ -56,6 +58,8 @@
       "pos_centroid": 0.325838,
       "head_rdm": 1.0,
       "active_gates": 24.239247,
+      "inactive_gates": 75.594378,
+      "intermediate_gates": 0.166376,
       "trainable": [],
       "summary": "Fixed residual network immediately after the structural lesion.",
       "implication": "The original readout fails on the changed representation; NOUN dominates the residual accuracy."
@@ -69,6 +73,8 @@
       "pos_centroid": 0.559458,
       "head_rdm": 1.0,
       "active_gates": 24.978299,
+      "inactive_gates": 75.013262,
+      "intermediate_gates": 0.008439,
       "trainable": ["gates"],
       "summary": "Surviving gates adapt without an explicit sparsity penalty; weights and readout stay fixed.",
       "implication": "Rerouting alone recovers part of the lost behavior and shifts geometry toward the core."
@@ -82,6 +88,8 @@
       "pos_centroid": 0.521516,
       "head_rdm": 1.0,
       "active_gates": 21.104601,
+      "inactive_gates": 78.879726,
+      "intermediate_gates": 0.015673,
       "trainable": ["gates"],
       "summary": "Surviving gates adapt under a sparsity-promoting objective; weights and readout stay fixed.",
       "implication": "A stronger sparsity constraint produces less recovery and marked seed sensitivity."
@@ -95,6 +103,8 @@
       "pos_centroid": 0.642498,
       "head_rdm": 1.0,
       "active_gates": 34.733072,
+      "inactive_gates": 64.309657,
+      "intermediate_gates": 0.957271,
       "trainable": ["gates"],
       "summary": "Surviving gate parameters adapt; pretrained encoder weights and the original POS readout remain fixed.",
       "implication": "The strongest gate-only route moves most toward core-like geometry but remains well below core accuracy."
@@ -108,6 +118,8 @@
       "pos_centroid": 0.325838,
       "head_rdm": 0.539025,
       "active_gates": 24.239247,
+      "inactive_gates": 75.594378,
+      "intermediate_gates": 0.166376,
       "trainable": ["readout"],
       "summary": "The linear POS classifier adapts; encoder weights, gates, and the damaged representation remain fixed.",
       "implication": "A new readout extracts substantial POS information without any encoder-representation change."
@@ -121,6 +133,8 @@
       "pos_centroid": 0.528725,
       "head_rdm": 0.689791,
       "active_gates": 21.420477,
+      "inactive_gates": 78.549385,
+      "intermediate_gates": 0.030138,
       "trainable": ["gates", "readout"],
       "summary": "Surviving gates and the linear POS classifier adapt together; pretrained encoder weights remain fixed.",
       "implication": "Joint adaptation outperforms either mechanism alone despite remaining closer to damaged than core geometry."
@@ -134,6 +148,8 @@
       "pos_centroid": 0.506665,
       "head_rdm": 1.0,
       "active_gates": 24.239247,
+      "inactive_gates": 75.594378,
+      "intermediate_gates": 0.166376,
       "trainable": ["encoder"],
       "summary": "Surviving pretrained encoder weights adapt; the lesion, gate configuration, and original POS readout remain fixed.",
       "implication": "The highest-capacity route nearly restores accuracy and global CKA, but not the original POS-centroid geometry."

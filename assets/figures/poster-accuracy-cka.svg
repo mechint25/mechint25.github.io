@@ -35,20 +35,20 @@
 			<text x="57.3681640625" y="330.77777777777777" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,661) scale(1,-1)">80</text>
 			<path d="M 92,414 L 1039,414 Z" style="stroke: rgb(96%,97%,98%); stroke-linecap: butt; stroke-width: 1;"/>
 			<text x="46.55224609375" y="409.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,818) scale(1,-1)">100</text>
-			<path d="M 143.27394,88.673778 L 143.27394,335.777778 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 4; stroke-dasharray: 8, 7;"/>
+			<path d="M 143.27394,88.709154 L 143.27394,335.784 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 4; stroke-dasharray: 8, 7;"/>
 			<text x="159.2739403225806" y="218.08888888888887" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,436) scale(1,-1)">identical encoder states</text>
 			<circle cx="143.2739403225806" cy="88.70915377777777" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(77%,29%,22%); fill-rule: evenodd;"/>
 			<text x="157.2739403225806" y="62.70915377777777" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,125) scale(1,-1)">Damaged</text>
 			<circle cx="143.2739403225806" cy="335.7840003555556" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
-			<text x="157.2739403225806" y="347.7840003555556" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,695) scale(1,-1)">Readout only</text>
+			<text x="159.2739403225806" y="307.7840003555556" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,615) scale(1,-1)">Readout only</text>
 			<circle cx="266.4603112903225" cy="358.77132124444444" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
-			<text x="280.4603112903225" y="370.77132124444444" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,741) scale(1,-1)">Gates + readout</text>
+			<text x="282.4603112903225" y="383.77132124444444" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,767) scale(1,-1)">Gates + readout</text>
 			<circle cx="404.5863709677419" cy="295.65727928888884" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(7%,54%,50%); fill-rule: evenodd;"/>
 			<text x="418.5863709677419" y="269.65727928888884" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,539) scale(1,-1)">Gates only, dense</text>
 			<circle cx="684.4645838709677" cy="383.9516177777778" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(82%,47%,12%); fill-rule: evenodd;"/>
-			<text x="340.30149793346766" y="395.9516177777778" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,791) scale(1,-1)">Encoder only</text>
+			<text x="622.3830409022177" y="408.9516177777778" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,817) scale(1,-1)">Encoder only</text>
 			<circle cx="1008.4516129032257" cy="394.38767466666667" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 3; fill: rgb(7%,24%,40%); fill-rule: evenodd;"/>
-			<text x="814.3827652469757" y="406.38767466666667" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,812) scale(1,-1)">Core</text>
+			<text x="950.3827652469757" y="366.38767466666667" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,732) scale(1,-1)">Core</text>
 			<text x="427.095947265625" y="10.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 19px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,20) scale(1,-1)">Linear CKA to pre-lesion core</text>
 			<text x="3" y="423.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,846) scale(1,-1)">POS accuracy (%)</text>
 		</g>

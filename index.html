@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head>  
+<head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Interactive companion to Multiple Recovery Paths in a Lesioned Transformer by Lorenzo Cannata and Uri Hasson, BlackboxNLP 2026.">
@@ -29,11 +29,11 @@
   <main id="main">
     <section class="hero" id="top" aria-labelledby="paper-title">
       <div class="hero-copy">
-        <p class="eyebrow">BlackboxNLP 2026 · Main Track · Poster #192</p>
+        <div class="hero-meta"><img src="./assets/unitn-logo.png" alt="University of Trento logo"><p class="eyebrow">BlackboxNLP 2026 · Poster #192</p></div>
         <h1 id="paper-title">Multiple Recovery Paths in a <em>Lesioned Transformer</em></h1>
         <p class="subtitle">Internal Rerouting and Readout Remapping</p>
         <p class="authors">Lorenzo Cannata <span aria-hidden="true">·</span> Uri Hasson</p>
-        <p class="finding">A sparse configuration can be necessary for the original model—yet cease to be necessary once the damaged system is allowed to adapt.</p>
+        <p class="finding">Recovery can use internal rerouting or readout retraining—and is strongest among fixed-weight routes when both adapt—without necessarily restoring the original representation.</p>
         <div class="hero-actions">
           <a class="button primary" href="#experiment">Explore the experiment</a>
           <a class="button" href="https://blackboxnlp.github.io/2026/accepted_papers/">Official acceptance listing</a>
@@ -242,11 +242,15 @@
       <div class="poster-copy">
         <p class="eyebrow">Conference poster</p>
         <h2 id="poster-title">The experiment, evidence, and conclusions on one page.</h2>
-        <p>The A0 portrait poster preserves the five-seed recovery summary, primary-run representational analysis, fixed-representation readout comparison, and matched random-lesion controls.</p>
+        <p>The latest A0 portrait poster adds effective active, inactive, and intermediate gate fractions for every condition while preserving the five-seed recovery and primary-run geometry analyses.</p>
         <div class="poster-actions">
-          <a class="button poster-primary" href="./assets/figures/recovery-paths-poster.pdf" target="_blank" rel="noopener">Open print-ready PDF</a>
-          <a class="button" href="./assets/figures/recovery-paths-poster.svg" download>Download editable SVG</a>
-          <a class="poster-text-link" href="./assets/figures/recovery-paths-poster-outlined.svg" download>Download portable outlined SVG</a>
+          <a class="button poster-primary" href="./assets/figures/recovery-paths-poster-gate-state.pdf" target="_blank" rel="noopener">Open latest print PDF</a>
+          <a class="button" href="./assets/figures/recovery-paths-poster-gate-state.svg" download>Download editable SVG</a>
+          <a class="poster-text-link" href="./assets/figures/recovery-paths-poster-gate-state-outlined.svg" download>Portable outlined SVG</a>
+          <a class="poster-text-link" href="./assets/figures/recovery-paths-poster.pdf" target="_blank" rel="noopener">Previous poster</a>
+          <a class="poster-text-link" href="./assets/figures/recovery-paths-poster.svg" download>Previous editable SVG</a>
+          <a class="poster-text-link" href="./assets/figures/recovery-paths-poster-outlined.svg" download>Previous outlined SVG</a>
+          <a class="poster-text-link" href="./assets/figures/recovery-paths-poster-geometry-draft.pdf" target="_blank" rel="noopener">Previous geometry draft</a>
         </div>
         <dl class="poster-details">
           <div><dt>Format</dt><dd>A0 portrait · 841 × 1189 mm</dd></div>
@@ -254,8 +258,8 @@
         </dl>
       </div>
       <figure class="poster-preview">
-        <a href="./assets/figures/recovery-paths-poster.pdf" target="_blank" rel="noopener" aria-label="Open the print-ready conference poster PDF">
-          <img loading="lazy" src="./assets/figures/recovery-paths-poster.svg" alt="Conference poster summarizing the lesion-and-recovery framework, recovery accuracy, representation analysis, readout remapping, and random-lesion controls">
+        <a href="./assets/figures/recovery-paths-poster-gate-state.pdf" target="_blank" rel="noopener" aria-label="Open the latest print-ready conference poster PDF">
+          <img loading="lazy" src="./assets/figures/recovery-paths-poster-gate-state.svg" alt="Conference poster summarizing recovery accuracy, effective gate states, representation analysis, readout remapping, and random-lesion controls">
         </a>
         <figcaption>Select the poster to open the print-ready PDF in a new tab.</figcaption>
       </figure>
