@@ -142,12 +142,12 @@ The plot evidence manifest is `figures_updated/evidence/manifest.json`. It recor
 - The latest gate-state and reference-style posters contain a verified QR for the canonical project URL; retained earlier poster variants remain unchanged.
 - Editable SVG text uses embedded Bitstream Vera Sans regular and bold fonts. The PDF embeds font subsets, while the outlined SVG converts every glyph to vector paths for font-independent viewing.
 
-Final gate-state A0 artifact checksums (2026-10-25):
+Final gate-state A0 artifact checksums (2026-10-26):
 
-- PDF: `d4c2a11d2efb2bf476b0b4560b7b7200918e2442eb9908239f7f22eb3c2ccdfa`
-- Editable SVG: `66ed099f2d36f3593ee9079a03a131c99faaca2d4e8d56aace59aadd3cbf978b`
-- Outlined SVG: `02cb395c3dde240a0423a5cbb939c014c61e63edc8b75a7c6b6ddb6e21c8c0e9`
-- PNG: `bf536cb8f503509b2d7c78ad1f7205b358d70fea0861ecfbacc4d2ad9fd276e4`
+- PDF: `bdb7edf91daa121800ab74692a4eae0907ef0187dd01930fdaf45303d3f190dd`
+- Editable SVG: `b9ce5172d3912a22da7f6bf5c4a2c9a111742fcafe6a156aba214a1d64df8927`
+- Outlined SVG: `95e7c980213e86107d5ae40000088886c54cdf8841cd5860e30ac420841d78cb`
+- PNG: `4ec91fb00436652e3db8a3bd5f0df471baa5ad676770a2be422dca6dd17eecae`
 
 ## Resolved manuscript discrepancies
 

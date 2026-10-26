@@ -237,11 +237,14 @@ def draw_framework(page: Page, top: float, plain_lesion: bool = False, editorial
     page.text_box(a_x + 335, box_top + 174, 215, 105, "The sparse configuration reaches 94.98% primary-run POS accuracy.", 18, MUTED, False, "left", 26, True)
 
     page.text_box(b_x + 22, box_top + 18, b_w - 44, 32, "B  Apply a permanent lesion", 23, BLUE, True)
-    cross(page, b_x + 58, box_top + 100, 19, LESION, 6)
+    lesion_center = 145 if plain_lesion else 100
+    lesion_text_top = 110 if plain_lesion else 72
+    cross(page, b_x + 58, box_top + lesion_center, 19, LESION, 6)
     lesion_copy = "Gates used by the task-sufficient core are permanently disabled. Their effective values are zero and gradients are blocked." if plain_lesion else "Mask scores forced to -12; effective gates are zero and gradients are blocked."
-    page.text_box(b_x + 96, box_top + 72, b_w - 120, 96 if plain_lesion else 72, lesion_copy, 18, INK, True, "left", 25, True)
-    page.text_box(b_x + 22, box_top + 171, b_w - 44, 78, "74 Q/K/V 64-coordinate input groups\n5 attention-output gate tensors\n9 FFN-intermediate + 4 FFN-output tensors", 17, MUTED, False, "left", 25)
-    page.text_box(b_x + 22, box_top + 274, b_w - 44, 44, "No recovery pathway can reactivate these entries.", 18, LESION, True, "left", 24, True)
+    page.text_box(b_x + 96, box_top + lesion_text_top, b_w - 120, 96 if plain_lesion else 72, lesion_copy, 18, INK, True, "left", 25, True)
+    if not plain_lesion:
+        page.text_box(b_x + 22, box_top + 171, b_w - 44, 78, "74 Q/K/V 64-coordinate input groups\n5 attention-output gate tensors\n9 FFN-intermediate + 4 FFN-output tensors", 17, MUTED, False, "left", 25)
+        page.text_box(b_x + 22, box_top + 274, b_w - 44, 44, "No recovery pathway can reactivate these entries.", 18, LESION, True, "left", 24, True)
 
     page.text_box(c_x + 22, box_top + 18, c_w - 44, 32, "C  Recovery trainability", 23, BLUE, True)
     table_x = c_x + 22
@@ -324,6 +327,7 @@ def draw_performance_and_gates(page: Page, site: dict, x: float, top: float, wid
     colors = [BLUE, ENCODER, READOUT, READOUT, GATE, GATE, GATE, DAMAGE]
     accuracy_x, accuracy_w = x + 220, 315
     gates_x, gates_w = x + 650, 245
+    page.text_box(x, top, 200, 22, "CONDITION", 15, BLUE, True, "right")
     page.text_box(accuracy_x, top, accuracy_w, 22, "ACCURACY · FIVE RUNS", 15, BLUE, True)
     page.rect(accuracy_x, top + 27, 10, 10, BLUE)
     page.text_box(accuracy_x + 17, top + 23, 55, 20, "mean", 13, MUTED)
@@ -341,7 +345,7 @@ def draw_performance_and_gates(page: Page, site: dict, x: float, top: float, wid
     for index, (key, label, color) in enumerate(zip(keys, labels, colors)):
         condition, values = site["conditions"][key], site["seeds"][key]
         cy = top + 66 + index * 39
-        page.text_box(x, cy - 10, 200, 23, label, 15, INK, key in {"readout_only", "damage"}, "right")
+        page.text_box(x, cy - 10, 200, 23, label, 15, INK, True, "right")
         for run_index, value in enumerate(values):
             page.circle(accuracy_x + accuracy_w * value / 100, cy + [-4, -2, 0, 2, 4][run_index], 3.5, WHITE, color, 1.5)
         mean = sum(values) / len(values)
@@ -361,7 +365,7 @@ def draw_cka(page: Page, site: dict, x: float, top: float, width: float, height:
     keys = ["damage", "readout_only", "readout_and_mask_reg", "mask_only_inverse_reg", "encoder_only", "core"]
     labels = {"damage": "Damaged", "readout_only": "Readout only", "readout_and_mask_reg": "Gates + readout", "mask_only_inverse_reg": "Gates only, dense", "encoder_only": "Encoder only", "core": "Core"}
     colors = {"damage": DAMAGE, "readout_only": READOUT, "readout_and_mask_reg": READOUT, "mask_only_inverse_reg": GATE, "encoder_only": ENCODER, "core": BLUE}
-    left, right, upper, lower = x + 92, x + width - 35, top + 26, top + height - 62
+    left, right, upper, lower = x + 104, x + width - 35, top + 54, top + height - 62
     sx = lambda value: left + (value - .4) / .62 * (right - left)
     sy = lambda value: lower - (value - 10) / 90 * (lower - upper)
     for tick in [.4, .5, .6, .7, .8, .9, 1.0]:
@@ -372,13 +376,15 @@ def draw_cka(page: Page, site: dict, x: float, top: float, width: float, height:
         py = sy(tick)
         page.line(left, py, right, py, SOFT, 1)
         page.text_box(left - 58, py - 12, 45, 24, str(tick), 17, MUTED, False, "right")
+    page.line(left, upper, left, lower, INK, 1.5)
+    page.line(left, lower, right, lower, INK, 1.5)
     damage = site["conditions"]["damage"]
     readout = site["conditions"]["readout_only"]
     damage_x = sx(damage["cka_core"])
     page.line(damage_x, sy(damage["accuracy"]), damage_x, sy(readout["accuracy"]), READOUT, 4, [8, 7])
     page.text_box(damage_x + 16, sy(54), 250, 48, "identical encoder states", 16, READOUT, True, "left", 21, True)
     offsets = {
-        "damage": (14, 9, 180, "left"),
+        "damage": (16, -32, 180, "left"),
         "readout_only": (16, 11, 210, "left"),
         "readout_and_mask_reg": (16, -42, 235, "left"),
         "mask_only_inverse_reg": (14, 9, 250, "left"),
@@ -396,8 +402,8 @@ def draw_cka(page: Page, site: dict, x: float, top: float, width: float, height:
         elif align == "center":
             label_x -= label_width / 2
         page.text_box(label_x, py + dy, label_width, 27, labels[key], 17, INK, True, align)
-    page.text_box(left, top + height - 29, right - left, 27, "Linear CKA to pre-lesion core", 19, MUTED, False, "center")
-    page.text_box(x + 3, top, 190, 26, "POS accuracy (%)", 17, MUTED, True)
+    page.text_box(left, top + height - 29, right - left, 27, "Linear CKA of final hidden states to core", 19, MUTED, False, "center")
+    page.text_box(x + 3, top + 4, 260, 26, "Held-out POS accuracy (%)", 17, MUTED, True)
 
 
 def bounds(tokens: list[dict[str, str]]) -> tuple[float, float, float, float]:
@@ -445,7 +451,7 @@ def draw_readout_stack(page: Page, tokens: list[dict[str, str]], x: float, top: 
     """Draw the fixed-token readout comparison compactly in two stacked panels."""
     xmin, xmax, ymin, ymax = bounds(tokens)
     page.text_box(x, top, width, 30, "Readout-only recovery", 24, BLUE, True)
-    page.text_box(x, top + 33, width, 24, "Same token representations; only the linear readout changes", 16, READOUT, True)
+    page.text_box(x, top + 33, width, 24, "Same encoder states for 816 tokens; only the linear readout changes", 16, READOUT, True)
     panel_top, gap = top + 68, 34
     panel_h = (height - 68 - gap) / 2
     panels = [
@@ -456,10 +462,11 @@ def draw_readout_stack(page: Page, tokens: list[dict[str, str]], x: float, top: 
         page.rect(x, panel_y, width, panel_h, WHITE, RULE, 4, 1.5)
         page.text_box(x + 18, panel_y + 10, width * .55, 25, title, 18, INK, True)
         page.text_box(x + width * .55, panel_y + 10, width * .42 - 18, 25, result, 15, READOUT if field == "remapped_correct" else DAMAGE, True, "right")
-        plot_left, plot_top = x + 25, panel_y + 43
-        plot_w, plot_h = width - 50, panel_h - 58
+        plot_left, plot_top = x + 52, panel_y + 43
+        plot_w, plot_h = width - 72, panel_h - 82
         page.line(plot_left, plot_top + plot_h, plot_left + plot_w, plot_top + plot_h, RULE, 1)
         page.line(plot_left, plot_top, plot_left, plot_top + plot_h, RULE, 1)
+        page.text_box(x + 8, plot_top - 2, 40, 20, "PC2", 13, MUTED, True, "right")
         for row in tokens:
             px = plot_left + (float(row["pc1"]) - xmin) / (xmax - xmin) * plot_w
             py = plot_top + plot_h - (float(row["pc2"]) - ymin) / (ymax - ymin) * plot_h
@@ -469,15 +476,16 @@ def draw_readout_stack(page: Page, tokens: list[dict[str, str]], x: float, top: 
             else:
                 page.line(px - 1.8, py - 1.8, px + 1.8, py + 1.8, DAMAGE, .8)
                 page.line(px + 1.8, py - 1.8, px - 1.8, py + 1.8, DAMAGE, .8)
+        page.text_box(plot_left, panel_y + panel_h - 24, plot_w, 20, "PC1", 13, MUTED, True, "center")
     arrow_x = x + width / 2
     page.arrow(arrow_x, panel_top + panel_h + 5, arrow_x, panel_top + panel_h + gap - 5, READOUT, 3, 10)
 
 
 def draw_geometry_plane(page: Page, site: dict, x: float, top: float, width: float, height: float) -> None:
     """Plot POS-centroid geometry against POS-readout geometry for recovery endpoints."""
-    page.text_box(x, top, width, 30, "Encoder and readout geometry", 24, BLUE, True)
-    page.text_box(x, top + 33, width, 24, "Primary-run endpoints; labels report held-out POS accuracy", 16, MUTED, True)
-    left, right, upper, lower = x + 105, x + width - 28, top + 92, top + height - 68
+    page.text_box(x, top, width, 30, "POS-centroid geometry vs. readout-weight geometry", 24, BLUE, True)
+    page.text_box(x, top + 38, width, 24, "x: encoder POS-centroid RDM   |   y: classifier-weight RDM   |   primary run", 16, MUTED, True)
+    left, right, upper, lower = x + 105, x + width - 28, top + 110, top + height - 76
     sx = lambda value: left + (value - .3) / .72 * (right - left)
     sy = lambda value: lower - (value - .5) / .52 * (lower - upper)
     for tick in [.3, .4, .5, .6, .7, .8, .9, 1.0]:
@@ -491,7 +499,7 @@ def draw_geometry_plane(page: Page, site: dict, x: float, top: float, width: flo
     page.line(left, upper, left, lower, INK, 1.4)
     page.line(left, lower, right, lower, INK, 1.4)
     page.text_box(left, top + height - 31, right - left, 24, "Spearman similarity of POS-centroid RDM to core (encoder)", 16, MUTED, False, "center")
-    page.text_box(x + 2, top + 59, width - 4, 23, "Spearman similarity of readout-weight RDM to core", 16, MUTED, True)
+    page.text_box(x + 2, top + 70, width - 4, 23, "Spearman similarity of readout-weight RDM to core", 16, MUTED, True)
 
     keys = ["damage", "readout_only", "mask_only_inverse_reg", "readout_and_mask_reg", "encoder_only", "core"]
     colors = {"damage": DAMAGE, "readout_only": READOUT, "mask_only_inverse_reg": GATE, "readout_and_mask_reg": READOUT, "encoder_only": ENCODER, "core": BLUE}
@@ -509,12 +517,12 @@ def draw_geometry_plane(page: Page, site: dict, x: float, top: float, width: flo
     callout_y = (start[1] + sy(readout["head_rdm"])) / 2 - 24
     page.text_box(start[0] + 18, callout_y, 230, 48, "same encoder geometry\nnew readout", 14, READOUT, True, "left", 19)
     offsets = {
-        "damage": (12, 11, "left"),
-        "readout_only": (14, -25, "left"),
-        "mask_only_inverse_reg": (12, -28, "left"),
-        "readout_and_mask_reg": (14, 9, "left"),
-        "encoder_only": (10, 11, "left"),
-        "core": (-215, 11, "right"),
+        "damage": (14, 18, "left"),
+        "readout_only": (16, -40, "left"),
+        "mask_only_inverse_reg": (14, 18, "left"),
+        "readout_and_mask_reg": (16, 14, "left"),
+        "encoder_only": (14, 18, "left"),
+        "core": (-16, 18, "right"),
     }
     for key in keys:
         condition = site["conditions"][key]
@@ -528,7 +536,7 @@ def draw_geometry_plane(page: Page, site: dict, x: float, top: float, width: flo
         label = f"{labels[key]} | {reported_accuracy[key]:.2f}%"
         label_w = 260
         page.text_box(px + dx - (label_w if align == "right" else 0), py + dy, label_w, 24, label, 16, INK, True, align)
-    page.text_box(right - 610, lower - 42, 610, 34, "Arrows compare endpoints only; they are not training trajectories", 14, MUTED, False, "right", 19, True)
+    page.text_box(right - 390, lower - 42, 390, 34, "Measured recovery endpoints", 14, MUTED, False, "right", 19, True)
 
 
 def draw_controls(page: Page, x: float, top: float, width: float) -> None:
@@ -540,8 +548,8 @@ def draw_controls(page: Page, x: float, top: float, width: float) -> None:
     page.circle(x + 515, top + 12, 7, WHITE, GATE, 3)
     page.text_box(x + 530, top, 180, 24, "random mean", 15, MUTED)
     rows = [
-        ("QKV-only lesion", "74 input groups; n=100", 80, 92, 84.84, 86.03, 89.78, 88.02, "0/100 random as damaging"),
-        ("Full QKV+dense lesion", "+18 dense tensors; n=100", 0, 40, 16.83, 8.71, 36.33, 16.33, "63/100 random as damaging"),
+        ("Q/K/V-only lesion", "74 input groups; n=100", 80, 92, 84.84, 86.03, 89.78, 88.02, "0/100 random as damaging"),
+        ("Full Q/K/V+dense lesion", "+18 dense tensors; n=100", 0, 40, 16.83, 8.71, 36.33, 16.33, "63/100 random as damaging"),
     ]
     for i, (label, detail, lo_axis, hi_axis, target, lo, hi, avg, result) in enumerate(rows):
         row_top = top + 52 + i * 86
@@ -613,27 +621,26 @@ def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = Fals
     section_heading(page, left_x, 1515, col_w, "Performance and gate state" if gate_state_version else "Recovery performance", "Five-run accuracy · primary-run gates" if gate_state_version else "Mean across five seeds")
     if gate_state_version:
         draw_performance_and_gates(page, site, left_x, 1586, col_w, 440)
-        gate_note = "Circles are individual runs; squares are means. Gate state at the primary-run endpoint: active p > 0.99, inactive p < 0.01, otherwise intermediate. Lesioned entries are held at -12 and cannot change during recovery."
+        gate_note = "Circles show individual runs; squares show their means. The bars show effective gate states at the primary-run endpoint: active p > 0.99, inactive p < 0.01, and intermediate otherwise. Lesioned entries stay fixed at -12."
         page.text_box(left_x, 2040, col_w, 116, gate_note, 17, MUTED, False, "left", 24, True)
     else:
         draw_performance(page, site, left_x, 1586, col_w, 440)
         page.text_box(left_x, 2040, col_w, 116, "All recovery conditions produced marked improvement over the damaged baseline. Filled squares show arithmetic means across five full-pipeline runs. Open circles are individual runs; capped spans show observed min-max ranges, not confidence intervals. The gate-only result is the density-promoting variant.", 18, MUTED, False, "left", 25, True)
 
-    section_heading(page, right_x, 1515, col_w, "Accuracy versus representation", "Primary run")
+    section_heading(page, right_x, 1515, col_w, "Performance vs. encoder geometry", "Primary run")
     draw_cka(page, site, right_x, 1586, col_w, 440)
-    cka_note = "Linear CKA compares each condition's final hidden states with the pre-lesion core. Readout-only preserves the damaged hidden states (CKA 0.43) while primary-run accuracy rises from 16.82% to 80.00%."
+    cka_note = "Readout-only retraining leaves the damaged encoder representation unchanged. Accuracy rises from 16.82% to 80.00%, while linear CKA to the pre-lesion core remains 0.43."
     page.text_box(right_x, 2040, col_w, 116, cka_note if gate_state_version else "Representational analysis showed that behavioral recovery was not necessarily accompanied by restoration of the original hidden-state geometry. CKA measures hidden-state similarity, not recovered circuitry. Readout-only leaves encoder states unchanged yet raises primary-run accuracy from 16.82% to 80.00%.", 18, MUTED, False, "left", 25, True)
 
     if geometry_draft or gate_state_version:
         section_heading(page, 80, 2200, 2224, "Encoder and readout geometry change differently across recovery paths" if gate_state_version else "Different recovery constraints produce different representational geometries")
         draw_readout_stack(page, tokens, 80, 2272, 760, 470)
-        draw_geometry_plane(page, site, 890, 2272, 1414, 470)
+        draw_geometry_plane(page, site, 890, 2272, 1414, 570)
         page.circle(96, 2780, 5, BLUE)
         page.text_box(110, 2769, 175, 22, "correct", 15, MUTED)
         cross(page, 300, 2780, 4, DAMAGE, 1.6)
         page.text_box(314, 2769, 180, 22, "incorrect", 15, MUTED)
-        page.text_box(80, 2798, 760, 58, "Coordinates are fixed across panels; only correctness under the original versus retrained readout changes. The shared core-fitted PC1-PC2 view explains 23.32% of core variance, while classification uses all 768 dimensions.", 15, MUTED, False, "left", 21, True)
-        page.text_box(890, 2798, 1414, 58, "Readout-only holds encoder POS-centroid similarity at 0.33 while readout-weight similarity changes from 1.00 to 0.54 and accuracy reaches 80.0%. Gate-only and joint recovery also move the encoder geometry.", 15, MUTED, False, "left", 21, True)
+        page.text_box(80, 2798, 760, 58, "Each token stays at the same PC1-PC2 coordinate in both panels. This is a 2D view of the encoder states; POS predictions use all 768 dimensions.", 15, MUTED, False, "left", 21, True)
     else:
         section_heading(page, 80, 2200, 2224, "Readout remapping recovers performance without changing encoder geometry")
         page.text_box(80, 2262, 2224, 31, "SAME TOKEN REPRESENTATIONS; ONLY THE LINEAR READOUT CHANGES", 20, READOUT, True, "center")
@@ -646,18 +653,27 @@ def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = Fals
 
     section_heading(page, 80, 2895, 1450, "Robustness and controls")
     draw_controls(page, 80, 2965, 1450)
-    controls_note = "Matched controls give different answers. The targeted Q/K/V-only lesion is more damaging than all 100 random 74-group lesions. For the full Q/K/V+dense lesion, 63/100 random matches are equally or more damaging; its severe endpoint is common under matched random targets."
-    page.text_box(80, 3177, 1450, 64, controls_note if gate_state_version else "The QKV-only control supports enrichment relative to globally random QKV groups. The full random QKV+dense control does not establish unique specificity of the exact dense target set; it qualifies the causal interpretation of the severe lesion.", 16, MUTED, False, "left", 22, True)
+    if gate_state_version:
+        page.circle(89, 3190, 4, BLUE)
+        page.text_box(104, 3178, 1426, 26, "Q/K/V only: the targeted 74-group lesion was more damaging than all 100 size-matched random lesions.", 16, MUTED)
+        page.circle(89, 3224, 4, BLUE)
+        page.text_box(104, 3212, 1426, 26, "Full lesion: with the same Q/K/V and dense counts chosen at random, 63/100 lesions were at least as damaging.", 16, MUTED)
+    else:
+        page.text_box(80, 3177, 1450, 64, "The QKV-only control supports enrichment relative to globally random QKV groups. The full random QKV+dense control does not establish unique specificity of the exact dense target set; it qualifies the causal interpretation of the severe lesion.", 16, MUTED, False, "left", 22, True)
 
     section_heading(page, 1580, 2895, 724, "Conclusions")
-    page.text_box(1580, 2965, 724, 76, "Performance can recover without relearning the underlying transformations.", 22, INK, True, "left", 30, True)
-    conclusion_width = 500 if gate_state_version else 724
-    page.text_box(1580, 3050, conclusion_width, 68, "The extent to which the original geometry is recovered depends on the degrees of freedom of the recovery protocol.", 18, INK, False, "left", 25, True)
-    page.text_box(1580, 3125, conclusion_width, 110, "Circuit necessity is conditional on the permitted rerouting strategy. A component may be necessary under the original fixed routing and readout, but cease to be so when the readout can be retrained or surviving transformations can be reselected.", 16, INK, False, "left", 22, True)
-    limitations = "LIMITATIONS\nOur evaluations were based on a single task and a single backbone model." if gate_state_version else "Our evaluations were based on a single task and a single backbone model. The biological relevance of these findings remains unclear."
-    page.text_box(1580, 3236 if gate_state_version else 3222, conclusion_width, 54 if gate_state_version else 48, limitations, 13 if gate_state_version else 14, MUTED, gate_state_version, "left", 18 if gate_state_version else 19, True)
     if gate_state_version:
-        draw_poster_qr(page, 2100, 3055, 204)
+        conclusion_width = 500
+        page.text_box(1580, 2962, 724, 62, "Performance can recover without relearning the underlying transformations.", 21, INK, True, "left", 28, True)
+        page.text_box(1580, 3037, conclusion_width, 64, "The extent to which the original geometry is recovered depends on the degrees of freedom of the recovery protocol.", 16, INK, False, "left", 21, True)
+        page.text_box(1580, 3108, conclusion_width, 100, "Circuit necessity is conditional on the permitted rerouting strategy. A component may be necessary under the original fixed routing and readout, but cease to be so when the readout can be retrained or surviving transformations can be reselected.", 14.5, INK, False, "left", 19.5, True)
+        page.text_box(1580, 3216, conclusion_width, 48, "LIMITATIONS\nOur evaluations were based on a single task and a single backbone model.", 12, MUTED, True, "left", 16, True)
+        draw_poster_qr(page, 2100, 3038, 204)
+    else:
+        page.text_box(1580, 2965, 724, 76, "Performance can recover without relearning the underlying transformations.", 22, INK, True, "left", 30, True)
+        page.text_box(1580, 3050, 724, 68, "The extent to which the original geometry is recovered depends on the degrees of freedom of the recovery protocol.", 18, INK, False, "left", 25, True)
+        page.text_box(1580, 3125, 724, 110, "Circuit necessity is conditional on the permitted rerouting strategy. A component may be necessary under the original fixed routing and readout, but cease to be so when the readout can be retrained or surviving transformations can be reselected.", 16, INK, False, "left", 22, True)
+        page.text_box(1580, 3222, 724, 48, "Our evaluations were based on a single task and a single backbone model. The biological relevance of these findings remains unclear.", 14, MUTED, False, "left", 19, True)
 
     page.line(80, 3290, 2304, 3290, RULE, 2)
     page.text_box(80, 3303, 1500, 28, "Methods: Louizos et al. (2018); Cao et al. (2021). Data: Universal Dependencies English-EWT.", 15, MUTED)
@@ -793,7 +809,7 @@ def main() -> None:
         "poster-recovery-performance.svg": reusable_figure(1074, 440, lambda page: draw_performance(page, site, 0, 0, 1074, 440)),
         "poster-accuracy-cka.svg": reusable_figure(1074, 440, lambda page: draw_cka(page, site, 0, 0, 1074, 440)),
         "poster-readout-remapping.svg": reusable_figure(2224, 445, lambda page: draw_readout(page, tokens, 0, 0, 2224, 445)),
-        "poster-recovery-geometry.svg": reusable_figure(1414, 470, lambda page: draw_geometry_plane(page, site, 0, 0, 1414, 470)),
+        "poster-recovery-geometry.svg": reusable_figure(1414, 570, lambda page: draw_geometry_plane(page, site, 0, 0, 1414, 570)),
     }
     for filename, figure in figures.items():
         write_editable_svg(figure, FIGURES / filename, filename.removesuffix(".svg"), "Reusable vector figure from the BlackboxNLP 2026 poster.")
