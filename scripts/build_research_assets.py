@@ -146,6 +146,15 @@ def load_data() -> tuple[dict, list[dict[str, str]]]:
     return site, tokens
 
 
+def load_per_tag_data() -> list[dict[str, str]]:
+    """Load primary-run raw and core-reference recall for each POS tag."""
+    with (DATA / "per-tag-accuracy.csv").open(newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    if len(rows) != 7 * 17:
+        raise ValueError(f"Expected 119 per-tag values, found {len(rows)}")
+    return rows
+
+
 def draw_encoder(page: Page, x: float, top: float, width: float, height: float) -> None:
     """Draw encoder layers and projection-specific gate locations."""
     page.rect(x, top, width, height, PALE_BLUE, BLUE, 6, 2)
@@ -451,7 +460,7 @@ def draw_readout_stack(page: Page, tokens: list[dict[str, str]], x: float, top: 
     """Draw the fixed-token readout comparison compactly in two stacked panels."""
     xmin, xmax, ymin, ymax = bounds(tokens)
     page.text_box(x, top, width, 30, "Readout-only recovery", 24, BLUE, True)
-    page.text_box(x, top + 33, width, 24, "Same encoder states for 816 tokens; only the linear readout changes", 16, READOUT, True)
+    page.text_box(x, top + 33, width, 24, "Core-fitted PC1-PC2 view of 816 POS-balanced token states; predictions use 768D states", 14, READOUT, True)
     panel_top, gap = top + 68, 34
     panel_h = (height - 68 - gap) / 2
     panels = [
@@ -466,7 +475,6 @@ def draw_readout_stack(page: Page, tokens: list[dict[str, str]], x: float, top: 
         plot_w, plot_h = width - 72, panel_h - 82
         page.line(plot_left, plot_top + plot_h, plot_left + plot_w, plot_top + plot_h, RULE, 1)
         page.line(plot_left, plot_top, plot_left, plot_top + plot_h, RULE, 1)
-        page.text_box(x + 8, plot_top - 2, 40, 20, "PC2", 13, MUTED, True, "right")
         for row in tokens:
             px = plot_left + (float(row["pc1"]) - xmin) / (xmax - xmin) * plot_w
             py = plot_top + plot_h - (float(row["pc2"]) - ymin) / (ymax - ymin) * plot_h
@@ -476,15 +484,106 @@ def draw_readout_stack(page: Page, tokens: list[dict[str, str]], x: float, top: 
             else:
                 page.line(px - 1.8, py - 1.8, px + 1.8, py + 1.8, DAMAGE, .8)
                 page.line(px + 1.8, py - 1.8, px - 1.8, py + 1.8, DAMAGE, .8)
-        page.text_box(plot_left, panel_y + panel_h - 24, plot_w, 20, "PC1", 13, MUTED, True, "center")
     arrow_x = x + width / 2
     page.arrow(arrow_x, panel_top + panel_h + 5, arrow_x, panel_top + panel_h + gap - 5, READOUT, 3, 10)
 
 
-def draw_geometry_plane(page: Page, site: dict, x: float, top: float, width: float, height: float) -> None:
+def draw_readout_mini(page: Page, tokens: list[dict[str, str]], x: float, top: float, width: float, height: float) -> None:
+    """Keep the shared-coordinate PCA view as a compact secondary illustration."""
+    xmin, xmax, ymin, ymax = bounds(tokens)
+    page.text_box(x, top, width, 26, "Readout-only recovery", 21, BLUE, True)
+    page.text_box(x, top + 29, width, 22, "Core-fitted PC1-PC2 view of the same 816 POS-balanced token states; classification uses all 768 dimensions", 13.8, READOUT, True)
+    gap, panel_top = 28, top + 62
+    panel_w, panel_h = (width - gap) / 2, height - 84
+    panels = [
+        (x, "original_correct", "Damaged + original readout", "49 / 816 correct | 16.82% full dev"),
+        (x + panel_w + gap, "remapped_correct", "Same encoder + retrained readout", "521 / 816 correct | 80.00% full dev"),
+    ]
+    for x0, field, title, result in panels:
+        page.rect(x0, panel_top, panel_w, panel_h, WHITE, RULE, 3, 1.2)
+        page.text_box(x0 + 12, panel_top + 8, panel_w - 24, 22, title, 15, INK, True)
+        page.text_box(x0 + 12, panel_top + 29, panel_w - 24, 20, result, 13, READOUT if field == "remapped_correct" else DAMAGE, True, "right")
+        plot_left, plot_top = x0 + 28, panel_top + 53
+        plot_w, plot_h = panel_w - 42, panel_h - 74
+        page.line(plot_left, plot_top + plot_h, plot_left + plot_w, plot_top + plot_h, RULE, .8)
+        page.line(plot_left, plot_top, plot_left, plot_top + plot_h, RULE, .8)
+        for row in tokens:
+            px = plot_left + (float(row["pc1"]) - xmin) / (xmax - xmin) * plot_w
+            py = plot_top + plot_h - (float(row["pc2"]) - ymin) / (ymax - ymin) * plot_h
+            if row[field] == "1":
+                page.circle(px, py, 1.25, BLUE)
+            else:
+                cross(page, px, py, 1.2, DAMAGE, .55)
+    page.arrow(x + panel_w + 4, panel_top + panel_h / 2, x + panel_w + gap - 4, panel_top + panel_h / 2, READOUT, 2.5, 8)
+
+
+def draw_measured_readout_table(page: Page, site: dict, x: float, top: float, width: float, height: float) -> None:
+    """Summarize the measured encoder, readout, and accuracy endpoints."""
+    page.text_box(x, top, width, 28, "What actually changed?", 22, BLUE, True)
+    page.text_box(x, top + 31, width, 22, "Primary run; similarities are measured against the pre-lesion core", 14, MUTED)
+    condition_w, cka_w, readout_w = width * .31, width * .24, width * .24
+    cka_x, readout_x = condition_w, condition_w + cka_w
+    accuracy_x, accuracy_w = readout_x + readout_w, width - readout_x - readout_w
+    columns = [(0, condition_w, "Condition"), (cka_x, cka_w, "Encoder CKA"), (readout_x, readout_w, "Readout RDM"), (accuracy_x, accuracy_w, "Accuracy")]
+    for offset, col_width, label in columns:
+        page.text_box(x + offset, top + 63, col_width, 20, label, 13, MUTED, True, "center" if offset else "left")
+    rows = [
+        ("Damaged", "damage", "1.00 fixed"),
+        ("Readout only", "readout_only", None),
+        ("Gates only, dense", "mask_only_inverse_reg", "1.00 fixed"),
+        ("Gates + readout", "readout_and_mask_reg", None),
+    ]
+    row_top = top + 91
+    for index, (label, key, readout_label) in enumerate(rows):
+        condition = site["conditions"][key]
+        y = row_top + index * 38
+        if index % 2:
+            page.rect(x, y - 5, width, 34, SOFT)
+        page.text_box(x + 8, y, condition_w - 16, 22, label, 14, INK, True)
+        cka = f"{condition['cka_core']:.2f}" + (" unchanged" if key == "readout_only" else "")
+        page.text_box(x + cka_x, y, cka_w, 22, cka, 13, READOUT if key == "readout_only" else INK, key == "readout_only", "center")
+        readout = readout_label or f"{condition['head_rdm']:.2f}"
+        page.text_box(x + readout_x, y, readout_w, 22, readout, 13, MUTED if readout_label else READOUT, not readout_label, "center")
+        page.text_box(x + accuracy_x, y, accuracy_w, 22, f"{condition['accuracy']:.2f}%", 14, INK, True, "right")
+    page.text_box(x, top + height - 42, width, 38, "A fixed readout remains exactly 1.00 by construction; it was not recovered.", 13, MUTED, False, "left", 18, True)
+
+
+def draw_per_tag_panel(page: Page, rows: list[dict[str, str]], x: float, top: float, width: float, height: float, centered_titles: bool = False) -> None:
+    """Show whether recovery extends across POS tags rather than only frequent classes."""
+    title_align = "center" if centered_titles else "left"
+    page.text_box(x, top, width, 26, "Recovery extends across POS classes", 21, BLUE, True, title_align)
+    page.text_box(x, top + 29, width, 22, "Primary run; recall within each gold POS class (%)", 14, MUTED, False, title_align)
+    tags = [row["tag"] for row in rows if row["condition"] == "Damaged"]
+    conditions = [(None, "Core (pre-lesion)"), ("Damaged", "Damaged"), ("Readout only", "Readout only"), ("Readout+mask", "Gates + readout")]
+    row_label_w = 170
+    if height < 250:
+        grid_top, row_step, cell_height = top + 78, 29, 24
+    else:
+        grid_top = top + 88
+        row_step = 48 if height >= 300 else 39
+        cell_height = 40 if height >= 300 else 32
+    cell_w = (width - row_label_w) / len(tags)
+    for index, tag in enumerate(tags):
+        page.text_box(x + row_label_w + index * cell_w, top + 54, cell_w, 18, tag, 11, MUTED, True, "center")
+    lookup = {(row["condition"], row["tag"]): float(row["accuracy_percent"]) for row in rows}
+    core_lookup = {row["tag"]: float(row["core_accuracy_percent"]) for row in rows if row["condition"] == "Damaged"}
+    for row_index, (source, label) in enumerate(conditions):
+        y = grid_top + row_index * row_step
+        page.text_box(x, y + 5, row_label_w - 12, 22, label, 14, INK, True)
+        for tag_index, tag in enumerate(tags):
+            value = core_lookup[tag] if source is None else lookup[(source, tag)]
+            fraction = max(0.0, min(1.0, value / 100.0))
+            channel = round(255 - fraction * 185)
+            fill = f"#{channel:02X}{min(255, channel + 18):02X}{min(255, channel + 30):02X}"
+            page.rect(x + row_label_w + tag_index * cell_w, y, cell_w - 2, cell_height, fill, RULE, 1, .5)
+            page.text_box(x + row_label_w + tag_index * cell_w, y + 5, cell_w - 2, 20, f"{value:.0f}", 12, WHITE if fraction > .58 else INK, True, "center")
+
+
+def draw_geometry_plane(page: Page, site: dict, x: float, top: float, width: float, height: float, centered_titles: bool = False) -> None:
     """Plot POS-centroid geometry against POS-readout geometry for recovery endpoints."""
-    page.text_box(x, top, width, 30, "POS-centroid geometry vs. readout-weight geometry", 24, BLUE, True)
-    page.text_box(x, top + 38, width, 24, "x: encoder POS-centroid RDM   |   y: classifier-weight RDM   |   primary run", 16, MUTED, True)
+    title_align = "center" if centered_titles else "left"
+    page.text_box(x, top, width, 30, "POS-centroid geometry vs. readout-weight geometry", 24, BLUE, True, title_align)
+    page.text_box(x, top + 38, width, 24, "x: encoder POS-centroid RDM   |   y: classifier-weight RDM   |   primary run", 16, MUTED, True, title_align)
     left, right, upper, lower = x + 105, x + width - 28, top + 110, top + height - 76
     sx = lambda value: left + (value - .3) / .72 * (right - left)
     sy = lambda value: lower - (value - .5) / .52 * (lower - upper)
@@ -514,14 +613,14 @@ def draw_geometry_plane(page: Page, site: dict, x: float, top: float, width: flo
     page.arrow(start[0], start[1] + 12, sx(readout["pos_centroid"]), sy(readout["head_rdm"]) - 12, READOUT, 2.8, 10)
     page.arrow(start[0] + 12, start[1], sx(gates["pos_centroid"]) - 12, sy(gates["head_rdm"]), GATE, 2.8, 10)
     page.line(start[0], start[1], sx(joint["pos_centroid"]), sy(joint["head_rdm"]), MUTED, 1.7, [6, 6])
-    callout_y = (start[1] + sy(readout["head_rdm"])) / 2 - 24
+    callout_y = (start[1] + sy(readout["head_rdm"])) / 2 + 6
     page.text_box(start[0] + 18, callout_y, 230, 48, "same encoder geometry\nnew readout", 14, READOUT, True, "left", 19)
     offsets = {
         "damage": (14, 18, "left"),
-        "readout_only": (16, -40, "left"),
+        "readout_only": (16, -28, "left"),
         "mask_only_inverse_reg": (14, 18, "left"),
         "readout_and_mask_reg": (16, 14, "left"),
-        "encoder_only": (14, 18, "left"),
+        "encoder_only": (14, 30, "left"),
         "core": (-16, 18, "right"),
     }
     for key in keys:
@@ -585,7 +684,7 @@ def draw_poster_qr(page: Page, x: float, top: float, width: float) -> None:
     page.text_box(x, top + width + 4, width, 22, PUBLIC_URL.removeprefix("https://").rstrip("/"), 12, BLUE, True, "center")
 
 
-def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = False, gate_state_version: bool = False, editorial_style: bool = False) -> Drawing:
+def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = False, gate_state_version: bool = False, editorial_style: bool = False, readout_evidence_variant: bool = False) -> Drawing:
     """Compose the A0 portrait poster as measured vector primitives."""
     drawing = Drawing(W, H)
     drawing.initialFontName = REGULAR
@@ -621,7 +720,7 @@ def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = Fals
     section_heading(page, left_x, 1515, col_w, "Performance and gate state" if gate_state_version else "Recovery performance", "Five-run accuracy · primary-run gates" if gate_state_version else "Mean across five seeds")
     if gate_state_version:
         draw_performance_and_gates(page, site, left_x, 1586, col_w, 440)
-        gate_note = "Circles show individual runs; squares show their means. The bars show effective gate states at the primary-run endpoint: active p > 0.99, inactive p < 0.01, and intermediate otherwise. Lesioned entries stay fixed at -12."
+        gate_note = "Circles are individual runs; squares are means. Gate state at the primary-run endpoint: active p > 0.99, inactive p < 0.01, otherwise intermediate. Lesioned entries are held at -12 and cannot change during recovery."
         page.text_box(left_x, 2040, col_w, 116, gate_note, 17, MUTED, False, "left", 24, True)
     else:
         draw_performance(page, site, left_x, 1586, col_w, 440)
@@ -629,10 +728,15 @@ def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = Fals
 
     section_heading(page, right_x, 1515, col_w, "Performance vs. encoder geometry", "Primary run")
     draw_cka(page, site, right_x, 1586, col_w, 440)
-    cka_note = "Readout-only retraining leaves the damaged encoder representation unchanged. Accuracy rises from 16.82% to 80.00%, while linear CKA to the pre-lesion core remains 0.43."
+    cka_note = "Linear CKA compares each condition's final hidden states with the pre-lesion core. Readout-only preserves the damaged hidden states (CKA 0.43) while primary-run accuracy rises from 16.82% to 80.00%."
     page.text_box(right_x, 2040, col_w, 116, cka_note if gate_state_version else "Representational analysis showed that behavioral recovery was not necessarily accompanied by restoration of the original hidden-state geometry. CKA measures hidden-state similarity, not recovered circuitry. Readout-only leaves encoder states unchanged yet raises primary-run accuracy from 16.82% to 80.00%.", 18, MUTED, False, "left", 25, True)
 
-    if geometry_draft or gate_state_version:
+    if readout_evidence_variant:
+        section_heading(page, 80, 2200, 2224, "Readout remapping exposes surviving POS information")
+        draw_readout_mini(page, tokens, 80, 2272, 980, 350)
+        draw_geometry_plane(page, site, 1110, 2272, 1194, 350, centered_titles=True)
+        draw_per_tag_panel(page, load_per_tag_data(), 80, 2632, 2224, 218, centered_titles=True)
+    elif geometry_draft or gate_state_version:
         section_heading(page, 80, 2200, 2224, "Encoder and readout geometry change differently across recovery paths" if gate_state_version else "Different recovery constraints produce different representational geometries")
         draw_readout_stack(page, tokens, 80, 2272, 760, 470)
         draw_geometry_plane(page, site, 890, 2272, 1414, 570)
@@ -804,6 +908,16 @@ def main() -> None:
     write_pdf(reference_style, reference_pdf)
     write_outlined_svg(reference_pdf, reference_outline)
     write_png(reference_pdf, reference_png)
+
+    readout_evidence = poster(site, tokens, gate_state_version=True, readout_evidence_variant=True)
+    readout_svg = FIGURES / "recovery-paths-poster-readout-evidence.svg"
+    readout_pdf = FIGURES / "recovery-paths-poster-readout-evidence.pdf"
+    readout_outline = FIGURES / "recovery-paths-poster-readout-evidence-outlined.svg"
+    readout_png = FIGURES / "recovery-paths-poster-readout-evidence.png"
+    write_editable_svg(readout_evidence, readout_svg, "Recovery paths poster - readout evidence variant", "A0 poster retaining the PCA view while emphasizing measured readout geometry and per-tag recovery.")
+    write_pdf(readout_evidence, readout_pdf)
+    write_outlined_svg(readout_pdf, readout_outline)
+    write_png(readout_pdf, readout_png)
 
     figures = {
         "poster-recovery-performance.svg": reusable_figure(1074, 440, lambda page: draw_performance(page, site, 0, 0, 1074, 440)),

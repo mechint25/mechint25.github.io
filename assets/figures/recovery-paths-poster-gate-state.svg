@@ -331,8 +331,8 @@
 			<path d="M 300,1411 L 615,1411 Z" style="stroke: rgb(7%,14%,21%); stroke-linecap: butt; stroke-width: 1.5;"/>
 			<text x="356.25732421875" y="1367.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 15px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2734) scale(1,-1)">Held-out POS accuracy (%)</text>
 			<text x="738.216552734375" y="1367.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 15px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2734) scale(1,-1)">Fraction of all gate entries (%)</text>
-			<text x="80" y="1313" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2626) scale(1,-1)">Circles show individual runs; squares show their means. The bars show effective gate states at the primary-run endpoint:</text>
-			<text x="80" y="1289" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2578) scale(1,-1)">active p &gt; 0.99, inactive p &lt; 0.01, and intermediate otherwise. Lesioned entries stay fixed at -12.</text>
+			<text x="80" y="1313" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2626) scale(1,-1)">Circles are individual runs; squares are means. Gate state at the primary-run endpoint: active p &gt; 0.99, inactive p &lt; 0.01,</text>
+			<text x="80" y="1289" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2578) scale(1,-1)">otherwise intermediate. Lesioned entries are held at -12 and cannot change during recovery.</text>
 			<text x="1230" y="1819.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 36px;fill: rgb(7%,24%,40%); stroke:none;" transform="translate(0,3638) scale(1,-1)">Performance vs. encoder geometry</text>
 			<text x="2163.38818359375" y="1827.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 21px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3654) scale(1,-1)">Primary run</text>
 			<path d="M 1230,1805 L 2304,1805 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2.5;"/>
@@ -378,18 +378,17 @@
 			<text x="2180.7698620211695" y="1683.947746" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,3367) scale(1,-1)">Core</text>
 			<text x="1609.927490234375" y="1354.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 19px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2708) scale(1,-1)">Linear CKA of final hidden states to core</text>
 			<text x="1233" y="1763.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 17px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,3526) scale(1,-1)">Held-out POS accuracy (%)</text>
-			<text x="1230" y="1312" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2624) scale(1,-1)">Readout-only retraining leaves the damaged encoder representation unchanged. Accuracy rises from 16.82% to</text>
-			<text x="1230" y="1287" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2574) scale(1,-1)">80.00%, while linear CKA to the pre-lesion core remains 0.43.</text>
+			<text x="1230" y="1312" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2624) scale(1,-1)">Linear CKA compares each condition's final hidden states with the pre-lesion core. Readout-only preserves the</text>
+			<text x="1230" y="1287" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 18px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,2574) scale(1,-1)">damaged hidden states (CKA 0.43) while primary-run accuracy rises from 16.82% to 80.00%.</text>
 			<text x="80" y="1134.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 36px;fill: rgb(7%,24%,40%); stroke:none;" transform="translate(0,2268) scale(1,-1)">Encoder and readout geometry change differently across recovery paths</text>
 			<path d="M 80,1120 L 2304,1120 Z" style="stroke: rgb(7%,24%,40%); stroke-linecap: butt; stroke-width: 2.5;"/>
 			<text x="80" y="1074.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 24px;fill: rgb(7%,24%,40%); stroke:none;" transform="translate(0,2148) scale(1,-1)">Readout-only recovery</text>
-			<text x="80" y="1049.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,2098) scale(1,-1)">Same encoder states for 816 tokens; only the linear readout changes</text>
+			<text x="80" y="1051.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 14px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,2102) scale(1,-1)">Core-fitted PC1-PC2 view of 816 POS-balanced token states; predictions use 768D states</text>
 			<rect x="80" y="846.0" width="760" height="184.0" rx="4" ry="4" style="stroke: rgb(78%,82%,85%); stroke-linecap: butt; stroke-width: 1.5; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
 			<text x="98" y="1002.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,2004) scale(1,-1)">Damaged + original readout</text>
 			<text x="518.623828125" y="1005.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 15px;fill: rgb(77%,29%,22%); stroke:none;" transform="translate(0,2010) scale(1,-1)">49 / 816 correct | 16.82% full dev</text>
 			<path d="M 132,885 L 820,885 Z" style="stroke: rgb(78%,82%,85%); stroke-linecap: butt; stroke-width: 1;"/>
 			<path d="M 132,987 L 132,885 Z" style="stroke: rgb(78%,82%,85%); stroke-linecap: butt; stroke-width: 1;"/>
-			<text x="99.88623046875" y="976.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 13px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,1952) scale(1,-1)">PC2</text>
 			<path d="M 300.169396,947.665932 L 303.769396,944.065932 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
 			<path d="M 303.769396,947.665932 L 300.169396,944.065932 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
 			<path d="M 314.152267,962.60582 L 317.752267,959.00582 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
@@ -1973,13 +1972,11 @@
 			<path d="M 302.630504,919.931238 L 299.030504,916.331238 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
 			<path d="M 364.987602,952.195349 L 368.587602,948.595349 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
 			<path d="M 368.587602,952.195349 L 364.987602,948.595349 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
-			<text x="461.943115234375" y="857.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 13px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,1714) scale(1,-1)">PC1</text>
 			<rect x="80" y="628.0" width="760" height="184.0" rx="4" ry="4" style="stroke: rgb(78%,82%,85%); stroke-linecap: butt; stroke-width: 1.5; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
 			<text x="98" y="784.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 18px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,1568) scale(1,-1)">Same encoder + retrained readout</text>
 			<text x="508.18681640625005" y="787.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 15px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,1574) scale(1,-1)">521 / 816 correct | 80.00% full dev</text>
 			<path d="M 132,667 L 820,667 Z" style="stroke: rgb(78%,82%,85%); stroke-linecap: butt; stroke-width: 1;"/>
 			<path d="M 132,769 L 132,667 Z" style="stroke: rgb(78%,82%,85%); stroke-linecap: butt; stroke-width: 1;"/>
-			<text x="99.88623046875" y="758.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 13px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,1516) scale(1,-1)">PC2</text>
 			<circle cx="301.96939564278125" cy="727.8659316258804" r="2.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,24%,40%); fill-rule: evenodd;"/>
 			<path d="M 314.152267,744.60582 L 317.752267,741.00582 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
 			<path d="M 317.752267,744.60582 L 314.152267,741.00582 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
@@ -3091,7 +3088,6 @@
 			<path d="M 302.630504,701.931238 L 299.030504,698.331238 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
 			<path d="M 364.987602,734.195349 L 368.587602,730.595349 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
 			<path d="M 368.587602,734.195349 L 364.987602,730.595349 Z" style="stroke: rgb(77%,29%,22%); stroke-linecap: butt; stroke-width: 0.8;"/>
-			<text x="461.943115234375" y="639.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 13px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,1278) scale(1,-1)">PC1</text>
 			<path d="M 460,841 L 460,817 Z" style="stroke: rgb(70%,24%,47%); stroke-linecap: butt; stroke-width: 3;"/>
 			<polygon points="460 817, 465.5 827, 454.5 827" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
 			<text x="890" y="1074.0" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 24px;fill: rgb(7%,24%,40%); stroke:none;" transform="translate(0,2148) scale(1,-1)">POS-centroid geometry vs. readout-weight geometry</text>
@@ -3133,19 +3129,19 @@
 			<path d="M 1052.970108,973.230769 L 1592.361025,973.230769 Z" style="stroke: rgb(7%,54%,50%); stroke-linecap: butt; stroke-width: 2.8;"/>
 			<polygon points="1592.361 973.2308, 1582.361 978.7308, 1582.361 967.7308" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(7%,54%,50%); fill-rule: evenodd;"/>
 			<path d="M 1040.970108,973.230769 L 1401.939896,744.153354 Z" style="stroke: rgb(32%,39%,45%); stroke-linecap: butt; stroke-width: 1.7; stroke-dasharray: 6, 6;"/>
-			<text x="1058.9701083333334" y="813.0246153846156" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 14px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,1626) scale(1,-1)">same encoder geometry</text>
-			<text x="1058.9701083333334" y="794.0246153846156" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 14px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,1588) scale(1,-1)">new readout</text>
+			<text x="1058.9701083333334" y="783.0246153846156" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 14px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,1566) scale(1,-1)">same encoder geometry</text>
+			<text x="1058.9701083333334" y="764.0246153846156" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 14px;fill: rgb(70%,24%,47%); stroke:none;" transform="translate(0,1528) scale(1,-1)">new readout</text>
 			<circle cx="1040.9701083333334" cy="973.230769230769" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 2.5; fill: rgb(77%,29%,22%); fill-rule: evenodd;"/>
 			<text x="1054.9701083333334" y="939.230769230769" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,1878) scale(1,-1)">Damaged | 16.82%</text>
 			<circle cx="1040.9701083333334" cy="632.8184615384616" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 2.5; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
-			<text x="1056.9701083333334" y="656.8184615384616" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,1313) scale(1,-1)">Readout only | 80.00%</text>
+			<text x="1056.9701083333334" y="644.8184615384616" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,1289) scale(1,-1)">Readout only | 80.00%</text>
 			<circle cx="1604.3610250000002" cy="973.230769230769" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 2.5; fill: rgb(7%,54%,50%); fill-rule: evenodd;"/>
 			<text x="1618.3610250000002" y="939.230769230769" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,1878) scale(1,-1)">Gates only, dense | 69.74%</text>
 			<circle cx="1401.9398958333334" cy="744.153353846154" r="12" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 2; fill: rgb(7%,54%,50%); fill-rule: evenodd;"/>
 			<circle cx="1401.9398958333334" cy="744.153353846154" r="7" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,24%,47%); fill-rule: evenodd;"/>
 			<text x="1417.9398958333334" y="714.153353846154" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,1428) scale(1,-1)">Gates + readout | 85.87%</text>
 			<circle cx="1362.6914791666668" cy="973.230769230769" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 2.5; fill: rgb(82%,47%,12%); fill-rule: evenodd;"/>
-			<text x="1376.6914791666668" y="939.230769230769" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,1878) scale(1,-1)">Encoder only | 92.31%</text>
+			<text x="1376.6914791666668" y="927.230769230769" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,1854) scale(1,-1)">Encoder only | 92.31%</text>
 			<circle cx="2240.416666666667" cy="973.230769230769" r="10" style="stroke: rgb(100%,100%,100%); stroke-linecap: butt; stroke-width: 2.5; fill: rgb(7%,24%,40%); fill-rule: evenodd;"/>
 			<text x="2099.315104166667" y="939.230769230769" style="font-family: 'Bitstream Vera Sans'; font-weight: 700; font-size: 16px;fill: rgb(7%,14%,21%); stroke:none;" transform="translate(0,1878) scale(1,-1)">Core | 94.98%</text>
 			<text x="2067.462890625" y="632" style="font-family: 'Bitstream Vera Sans'; font-weight: 400; font-size: 14px;fill: rgb(32%,39%,45%); stroke:none;" transform="translate(0,1264) scale(1,-1)">Measured recovery endpoints</text>
