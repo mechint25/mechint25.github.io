@@ -88,6 +88,11 @@ class ReadoutRemappingTest(unittest.TestCase):
         self.assertEqual((drawing.width, drawing.height), (ASSETS.W, ASSETS.H))
         text_items = [getattr(item, "text", "") for item in drawing.getContents()]
         poster_text = " ".join(text_items)
+        self.assertIn("Lorenzo Cannata (DISI)   -   Uri Hasson (CIMeC)", poster_text)
+        self.assertIn("Department of Information Engineering and Computer Science   -   Center for Mind/Brain Sciences   (University of Trento)", poster_text)
+        self.assertNotIn("Five-run accuracy · primary-run gates", poster_text)
+        self.assertIn("References: Louizos et al. (2018); Cao et al. (2021).", poster_text)
+        self.assertNotIn("Methods: Louizos et al. (2018); Cao et al. (2021).", poster_text)
         self.assertIn("adapting the surviving projection-specific gates", poster_text)
         self.assertNotIn("reselecting", poster_text)
         self.assertIn("Performance vs. encoder geometry", poster_text)

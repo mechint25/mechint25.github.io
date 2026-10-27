@@ -694,9 +694,11 @@ def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = Fals
         page.image(85, 72, 136, 136, UNITN_LOGO)
     page.text_box(240 if gate_state_version else 80, 38, 2064 if gate_state_version else 2224, 90, "Multiple Recovery Paths in a Lesioned Transformer", 70 if gate_state_version else 73, INK, True, "center")
     page.text_box(80, 132, 2224, 68, "Internal Rerouting and Readout Remapping", 51, BLUE, True, "center")
-    page.text_box(80, 219, 2224, 40, "Lorenzo Cannata   |   Uri Hasson", 29, INK, True, "center")
+    page.text_box(80, 211, 2224, 40, "Lorenzo Cannata (DISI)   -   Uri Hasson (CIMeC)", 29, INK, True, "center")
+    affiliation = "Department of Information Engineering and Computer Science   -   Center for Mind/Brain Sciences   (University of Trento)"
+    page.text_box(80, 253, 2224, 26, affiliation, 17, MUTED, False, "center")
     venue = "BlackboxNLP 2026   |   Poster #192" if gate_state_version else "BlackboxNLP 2026   |   Main Track   |   Poster #192"
-    page.text_box(80, 269, 2224, 32, venue, 20, BLUE, True, "center")
+    page.text_box(80, 284, 2224, 28, venue, 18, BLUE, True, "center")
     page.line(80, 322, 2304, 322, BLUE, 3)
 
     section_heading(page, 80, 350, 2224, "Motivation")
@@ -717,7 +719,7 @@ def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = Fals
     draw_framework(page, 620, plain_lesion=gate_state_version, editorial=editorial_style)
 
     left_x, right_x, col_w = 80, 1230, 1074
-    section_heading(page, left_x, 1515, col_w, "Performance and gate state" if gate_state_version else "Recovery performance", "Five-run accuracy · primary-run gates" if gate_state_version else "Mean across five seeds")
+    section_heading(page, left_x, 1515, col_w, "Performance and gate state" if gate_state_version else "Recovery performance", None if gate_state_version else "Mean across five seeds")
     if gate_state_version:
         draw_performance_and_gates(page, site, left_x, 1586, col_w, 440)
         gate_note = "Circles are individual runs; squares are means. Gate state at the primary-run endpoint: active p > 0.99, inactive p < 0.01, otherwise intermediate. Lesioned entries are held at -12 and cannot change during recovery."
@@ -780,7 +782,7 @@ def poster(site: dict, tokens: list[dict[str, str]], geometry_draft: bool = Fals
         page.text_box(1580, 3222, 724, 48, "Our evaluations were based on a single task and a single backbone model. The biological relevance of these findings remains unclear.", 14, MUTED, False, "left", 19, True)
 
     page.line(80, 3290, 2304, 3290, RULE, 2)
-    page.text_box(80, 3303, 1500, 28, "Methods: Louizos et al. (2018); Cao et al. (2021). Data: Universal Dependencies English-EWT.", 15, MUTED)
+    page.text_box(80, 3303, 1500, 28, "References: Louizos et al. (2018); Cao et al. (2021). Data: Universal Dependencies English-EWT.", 15, MUTED)
     page.text_box(1600, 3303, 704, 28, "BlackboxNLP 2026   |   Poster #192", 15, MUTED, False, "right")
     if editorial_style:
         recolor_reference_style(drawing)
